@@ -26,7 +26,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathName = usePathname();
 
-  async function login(email: string, password: string) {}
+  async function login(email: string, password: string) {
+    console.log(email, password);
+  }
 
   async function logout() {
     router.push('/login');
