@@ -44,3 +44,7 @@ model Users {
   posts Posts[]
   comments Comments[]
 }
+
+// model AuthUser {
+//
+// }

@@ -22,9 +22,6 @@ app.get("/login", async (req, res) => {
   const params = new URLSearchParams({
     client_id: process.env.CLIENT_ID!,
     redirect_uri: "http://localhost:8000/authorize",
-    // redirect_uri: "https://www.facebook.com/connect/login_success.html",
-    // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_content,pages_show_list,public_profile,email",
-    // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement",
     scope: "email",
     response_type: "code",
     state: "{st=abc,ds=123}",
@@ -44,6 +41,7 @@ app.get("/authorize", async (req, res) => {
   })
   const response = await fetch(`https://graph.facebook.com/v4.0/oauth/access_token?${params.toString()}`)
   const data = await response.json()
+  const accessToken = data.access_token
   console.log(JSON.stringify(data))
   return res.redirect("http://localhost:3000")
 })
@@ -62,7 +60,7 @@ const server = app.listen(PORT, () => {
   console.log(`⚡️[server]: running on port ${PORT}`);
 });
 
-app.use(function (err, req, res, _) {
+app.use(function(err, req, res, _) {
   try {
     if (err.name === 'AbortError') {
       return res.status(418).json('request was aborted');
