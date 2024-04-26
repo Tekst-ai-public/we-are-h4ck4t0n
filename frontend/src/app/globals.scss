@@ -1,4 +1,119 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+svg#loading-svg {
+  width: 100%;
+  transform-origin: center;
+  animation: rotate 2s linear infinite;
+}
+
+circle#loading-circle {
+  fill: none;
+  stroke-width: 4;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 90, 200;
+    stroke-dashoffset: -35px;
+  }
+
+  100% {
+    stroke-dashoffset: -125px;
+  }
+}
+
+.shimmer-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 40px;
+  height: inherit;
+  background: linear-gradient(to left, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+  animation: shimmerAnimation 2s infinite linear;
+}
+
+.shimmer-thick {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 120px;
+  height: inherit;
+  background: linear-gradient(to left, transparent 0%, rgba(255, 255, 255, 1) 50%, transparent 100%);
+  animation: shimmerAnimation 2s infinite ease-in;
+}
+
+@keyframes shimmerAnimation {
+  0% {
+    left: -20%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+.loading-div {
+  width: 0;
+  animation: growAnimation 2s forwards;
+}
+
+@keyframes growAnimation {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@layer base {
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
