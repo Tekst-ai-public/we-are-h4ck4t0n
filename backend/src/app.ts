@@ -17,7 +17,7 @@ app.get('/test', function (req: Request, res: Response) {
 
 app.get('/posts', async (req: Request, res: Response) => {
   const pageId = '292767810588573';
-  const accessToken = req.query.accessToken as string;
+  const accessToken = req.query.access_token as string;
 
   if (!accessToken) {
     return res.status(403).json({ message: 'Access token is required as a query parameter.' });
@@ -39,8 +39,8 @@ app.get('/posts', async (req: Request, res: Response) => {
 });
 
 app.get('/comments', async (req: Request, res: Response) => {
-  const postId = req.query.postId as string;
-  const accessToken = req.query.accessToken as string;
+  const postId = req.query.post_id as string;
+  const accessToken = req.query.access_token as string;
 
   if (!postId || !accessToken) {
     return res.status(403).json({ message: 'Post ID and Access token are required as query parameters.' });
