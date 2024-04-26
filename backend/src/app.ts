@@ -16,6 +16,8 @@ app.get('/test', function (req: Request, res: Response) {
   });
 });
 
+app.use((req) => console.log('-->', req.method, req.url));
+
 app.use(postsRouter);
 
 const server = app.listen(PORT, () => {
