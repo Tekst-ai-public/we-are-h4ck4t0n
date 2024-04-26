@@ -30,7 +30,7 @@ export default function Header() {
               width={55}
               height={55}
               alt="Avatar"
-              className="object-contain"
+              className="object-cover h-full"
             />
           </Button>
         </DropdownMenuTrigger>
