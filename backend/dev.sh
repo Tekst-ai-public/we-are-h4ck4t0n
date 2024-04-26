@@ -2,7 +2,7 @@
 
 if [ "$NO_HOT_RELOAD" = "true" ]; then
 	echo "NO_HOT_RELOAD is set to true, starting server."
-	npm run startprod
+	node dist/app.js
 	# Put your code here for the scenario when NO_HOT_RELOAD is true
 else
 
