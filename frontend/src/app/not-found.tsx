@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image"
+import React from 'react';
 import Header from "@/app/(main)/components/header";
-import SideNav from "@/app/(main)/components/sideNav";
-import React from "react";
+import SideNav from '@/app/(main)/components/sideNav';
 
 export default function NotFound(){
     return (
