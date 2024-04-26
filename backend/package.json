@@ -10,12 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@auth/express": "^0.5.4",
+    "@auth/prisma-adapter": "^2.0.0",
+    "@prisma/client": "^5.13.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "prisma": "^5.13.0",
-    "typescript": "^5.4.5",
-    "@prisma/client": "^5.13.0"
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.7.1",
