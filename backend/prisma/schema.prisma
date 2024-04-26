@@ -13,6 +13,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Julien {
-    id  Int @id
+
+model Posts {
+  id String @id @unique
+  updatedAt  DateTime   @updatedAt
+  createdAt  DateTime   @default(now())
+  author Users @relation(fields: [authorId], references: [id])
+  authorId String
+  content String
+  meta Json
+  comments Comments[]
+}
+
+model Comments {
+  id String @id
+  updatedAt  DateTime   @updatedAt
+  createdAt  DateTime   @default(now())
+  content String
+  meta Json
+  author Users @relation(fields: [authorId], references: [id])
+  authorId String
+  post Posts @relation(fields: [postId], references: [id])
+  postId String
+}
+
+model Users {
+  id String @id @unique 
+  updatedAt  DateTime   @updatedAt
+  createdAt  DateTime   @default(now())
+  posts Posts[]
+  comments Comments[]
 }
