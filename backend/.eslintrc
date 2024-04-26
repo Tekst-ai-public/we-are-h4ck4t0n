@@ -1,0 +1,54 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "**/tsconfig.json"
+  },
+  "ignorePatterns": ["volumes/**/*"],
+  "plugins": [
+    "@typescript-eslint",
+    "security",
+    "simple-import-sort",
+    "sonarjs",
+    "import",
+    "unused-imports"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/strict",
+    "plugin:security/recommended",
+    "plugin:sonarjs/recommended"
+  ],
+  "rules": {
+    "unused-imports/no-unused-imports-ts": "error",
+    "no-console": "error",
+    "prefer-const": "error",
+    "no-self-compare": "error",
+    "no-duplicate-imports": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "eqeqeq": "error",
+    "@typescript-eslint/ban-ts-comment": 0,
+    "security/detect-object-injection": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-explicit-any": 0,
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "@typescript-eslint/prefer-nullish-coalescing": 0,
+    "@typescript-eslint/prefer-optional-chain": 0,
+    "@typescript-eslint/no-extraneous-class": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/no-non-null-asserted-optional-chain": 0,
+    "no-unsafe-optional-chaining": 0,
+    "@typescript-eslint/no-unnecessary-condition": 0
+  }
+}
