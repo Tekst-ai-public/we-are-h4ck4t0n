@@ -24,6 +24,7 @@
     "typescript": "^5.4.5"
   },
   "devDependencies": {
+    "@babel/helper-compilation-targets": "^7.23.6",
     "@biomejs/biome": "^1.7.1",
     "@swc/cli": "^0.3.12",
     "@swc/core": "^1.5.0",

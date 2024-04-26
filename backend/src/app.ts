@@ -1,10 +1,11 @@
-import helmet from "helmet";
-import { ExpressAuth } from '@auth/express';
+import helmet from 'helmet';
 import FaceBookProvider from '@auth/express/providers/facebook';
 import express, { Application, Request, Response } from 'express';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from './utils/prisma';
 import cors from 'cors';
+
+const ExpressAuth = require('@auth/express');
 
 const PORT = 8000;
 
@@ -33,13 +34,13 @@ app.use(
   })
 );
 
-app.get("/test", function (req: Request, res: Response) {
-    return res.json({
-        message: "Test succeeded!",
-    });
+app.get('/test', function (req: Request, res: Response) {
+  return res.json({
+    message: 'Test succeeded!',
+  });
 });
 
 const server = app.listen(PORT, () => {
-    console.log(`Environment: ${process.env.NODE_ENV}`);
-    console.log(`⚡️[server]: running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`⚡️[server]: running on port ${PORT}`);
 });
