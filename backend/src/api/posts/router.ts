@@ -1,8 +1,15 @@
 import express from 'express';
 import getAllPosts from './getAllPosts';
+import getPostById from './getPostById';
+import newPost from './newPost';
 
-const postsRouter = express.Router();
+const app = express.Router();
 
-postsRouter.get('/', getAllPosts);
+app.get('/', getAllPosts);
 
-export default postsRouter;
+app.get('/:id', getPostById);
+
+app.post('/', newPost);
+
+
+export default app;
