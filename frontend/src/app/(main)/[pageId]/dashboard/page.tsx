@@ -4,6 +4,7 @@ import { BarChart4 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from "@/context/authContext";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 
 type CommentTypeCount = {
   type: string;
@@ -24,10 +25,30 @@ export default function Page({ params }: { params: { pageId: string } }) {
   const [labels, setLabels] = useState<any[]>([])
   const [selectedLabel, setSelectedLabel] = useState("")
   const [labelsLoading, setLabelsLoading] = useState(true)
+  const [selectedSync, setSelectedSync] = useState<boolean>(false)
+  const [syncLoading, setSyncLoading] = useState(true)
 
   const [comments, setComments] = useState<{ authorId: string, content: string, createdAt: string, id: string, meta: { comment_type: string }, postId: string, updatedAt: string }[]>([])
 
   const { apiFetch } = useAuth()
+
+  async function patchSettings(sync: boolean) {
+    try {
+      const res = await apiFetch(`/page/settings/sync?pageId=${params.pageId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          sync: sync
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(`Error saving settings: ${data}`);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +63,21 @@ export default function Page({ params }: { params: { pageId: string } }) {
         console.log("numbers failed")
       }
     };
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await apiFetch<any>(`/page/settings/sync?pageId=${params.pageId}`, {});
+          const data = await response.json()
+          if (response.ok) {
+            setSelectedSync(data.sync)
+            setSyncLoading(false)
+          }
+          
+        } catch (error) {
+          console.log("numbers failed")
+        }
+      };
 
 
     fetchData();
@@ -122,6 +158,19 @@ export default function Page({ params }: { params: { pageId: string } }) {
       <Card className="col-span-4 h-[500px]">
         <CardHeader className="flex flex-row justify-between">
           <CardTitle>Live Feed</CardTitle>
+          <Select value={selectedSync} onValueChange={newValue => setSelectedSync(newValue)}>
+            <SelectTrigger className="w-[350px]">
+              <SelectValue placeholder="select a label" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {["true", "false"].map((label: any) => {
+                  return <SelectItem key={label} value={label}>{label}</SelectItem>
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button disabled={syncLoading} variant="secondary" className="w-28" onClick={() => setSyncLoading(true)}>
           <Select value={selectedLabel} onValueChange={newValue => setSelectedLabel(newValue)}>
             <SelectTrigger className="w-[350px]">
               <SelectValue placeholder="select a label" />

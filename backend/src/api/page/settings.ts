@@ -96,4 +96,29 @@ app.patch('/sync', async function(req: Request, res: Response, next) {
     }
 });
 
+
+
+app.get('/sync', async function(req: Request, res: Response, next) {
+    try {
+        const page = await prisma.page.findFirst({
+            where: {
+                id: String(req.query.pageId)
+            },
+            select: {
+                sync: true
+            }
+        });
+        if (!page) {
+            return res.status(404).json({ message: 'Page not found' });
+        }
+    
+        return res.status(200).json(page.sync);
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+});
+
+
 export default app;
