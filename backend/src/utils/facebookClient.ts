@@ -1,13 +1,14 @@
 export default class FacebookClient {
-    private _accessToken: string;
-    private _graphApiVersion: string;
+  private _accessToken: string;
+  private _graphApiVersion: string;
 
-    constructor(accessToken: string, graphApiVersion: string) {
-        this._accessToken = accessToken;
-        this._graphApiVersion = graphApiVersion;
-    }
+  constructor(accessToken: string, graphApiVersion: string = "19.0") {
+    this._accessToken = accessToken;
+    this._graphApiVersion = graphApiVersion;
+  }
 
-    public async getUserInfo(): Promise<any> {
+
+    public async getUserInfo(): Promise<{ name: string, id: string }> {
         const headers = { 
             'Authorization': `Bearer ${this._accessToken}`
         }
@@ -15,6 +16,7 @@ export default class FacebookClient {
 
         return response;
     }
+  
     async fetch(url: string, method: string, body?: any, queryParams?: any): Promise<any> {
         let query = '';
         if (queryParams) {
@@ -57,8 +59,6 @@ export default class FacebookClient {
         const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}`, 'GET');
         return response;
     }
-
-
 
 
 }
