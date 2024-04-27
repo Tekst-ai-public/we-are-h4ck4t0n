@@ -88,7 +88,7 @@ app.get("/authorize", async (req, res, next) => {
             create: {
               id: page.id,
               name: page.name,
-              sync: true,
+              sync: false,
               accessToken: page.access_token
             }, update: {
               name: page.name,
