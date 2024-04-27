@@ -104,6 +104,7 @@ async function getSettings(pageId: string): Promise<Omit<CategorizeInput, 'actua
   if (!settings) {
     throw new Error('Settings not found');
   }
+  console.log(settings);
   return settings;
 }
 
