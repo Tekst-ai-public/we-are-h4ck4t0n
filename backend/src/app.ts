@@ -4,6 +4,7 @@ import categorize from "./api/categorize/categorize"
 import cors from 'cors';
 import syncRouter from './api/sync/router';
 import posts from './api/posts/posts';
+import numbers from "./api/posts/numbers"
 import FacebookClient from "./utils/facebookClient";
 import prisma from "./utils/prisma";
 import jwt from "jsonwebtoken"
@@ -139,7 +140,7 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
     next(err)
   }
 })
-
+app.use("/posts/numbers", numbers);
 app.use("/categorize", categorize);
 app.use("/posts", posts);
 app.use("/sync", syncRouter);
