@@ -9,7 +9,7 @@ type PingProps = {
 
 export default function Ping({ className, pingColor, dotColor }: PingProps) {
   return (
-    <span className={cn('absolute -top-1 -right-1 flex h-3 w-3', className)}>
+    <span className={cn('absolute -top-2 -right-2 flex h-5 w-5 rounded-full flex-center', className)}>
       <span
         className={cn(
           'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75',
