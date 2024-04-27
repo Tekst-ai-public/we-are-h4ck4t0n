@@ -25,8 +25,7 @@ app.get("/login", async (req, res) => {
     redirect_uri: "http://localhost:8000/authorize",
     // redirect_uri: "https://www.facebook.com/connect/login_success.html",
     // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_content,pages_show_list,public_profile,email",
-    // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement",
-    scope: "email",
+    scope: "pages_read_engagement,pages_show_list,pages_read_user_content,pages_manage_posts,email",
     response_type: "code",
     state: "{st=abc,ds=123}",
     config_id: "1100666177855608"
