@@ -75,7 +75,7 @@ export default class FacebookClient {
 
   public async getPostsByPage(id: string, token?: string): Promise<{ data: Post[] }> {
     console.log(`token is ${token}`);
-    const response = await this.fetch<{ data: Post[] }>(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/posts`, 'GET', undefined, undefined, token);
+    const response = await this.fetch<{ data: Post[] }>(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/posts?limit=50`, 'GET', undefined, undefined, token);
     return response;
   }
 
@@ -85,7 +85,7 @@ export default class FacebookClient {
   }
 
   public async getCommentsByPost(id: string,accessToken?: string): Promise<any> {
-    const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/comments?filter=stream&order=reverse_chronological`, 'GET',undefined,undefined,accessToken);
+    const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/comments?filter=stream&order=reverse_chronological&limit=1000`, 'GET',undefined,undefined,accessToken);
     return response;
   }
 
