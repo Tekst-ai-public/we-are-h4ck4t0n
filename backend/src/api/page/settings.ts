@@ -17,6 +17,7 @@ app.get('/', async function (req: Request, res: Response, next) {
       },
       select: {
         settings: true,
+        sync: true,
       },
     });
     if (!page) {
@@ -24,7 +25,7 @@ app.get('/', async function (req: Request, res: Response, next) {
     }
     const settings = page.settings;
 
-    return res.status(200).json(settings);
+    return res.status(200).json({ settings, sync: page.sync });
   } catch (error) {
     console.log(error);
     next(error);
