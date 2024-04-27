@@ -2,6 +2,7 @@
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAuth } from '@/context/authContext'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 export default function Page({ params }: { params: { pageId: string } }) {
@@ -9,21 +10,30 @@ export default function Page({ params }: { params: { pageId: string } }) {
   const [pages, setPages] = useState<any>([])
   const [currentPage, setCurrentPage] = useState<any>()
   const { apiFetch } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     apiFetch("/pages", {}).then(async res => {
       const data = await res.json()
       if (res.ok) {
+        // @ts-ignore
         setPages(data.data)
       }
     })
   }, [])
 
   useEffect(() => {
+    // @ts-ignore
     if (pages.some(page => page.id === params.pageId)) {
       setCurrentPage(params.pageId)
     }
   }, [params.pageId, pages])
+
+  useEffect(() => {
+    if (currentPage) {
+      router.push(`/${currentPage}/dashboard`)
+    }
+  }, [currentPage])
 
   if (!currentPage) {
     return (
