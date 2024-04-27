@@ -148,7 +148,11 @@ export default function Page({ params }: { params: { pageId: string } }) {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Manage your models
-            <div className={cn('flex items-center gap-3 text-lg font-medium ')}>
+            <div
+              className={cn(
+                'flex items-center gap-3 text-lg font-medium px-4 py-1 rounded-full bg-secondary/10 border mr-5'
+              )}
+            >
               Sync
               <Switch checked={checked} onCheckedChange={changeSync} />
             </div>
