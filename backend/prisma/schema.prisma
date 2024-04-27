@@ -45,6 +45,7 @@ model Users {
   comments Comments[]
 }
 
-// model AuthUser {
-//
-// }
+model AuthUser {
+  id Int @id
+  name String @default("")
+}

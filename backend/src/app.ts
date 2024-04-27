@@ -3,6 +3,8 @@ import express, { Application, Request, Response } from "express"
 import categorize from "./categorize"
 import cors from 'cors';
 import postsRouter from './api/posts/router';
+import FacebookClient from "./utils/facebookClient";
+import prisma from "./utils/prisma";
 
 const PORT = 8000;
 
@@ -42,7 +44,21 @@ app.get("/authorize", async (req, res) => {
   const response = await fetch(`https://graph.facebook.com/v4.0/oauth/access_token?${params.toString()}`)
   const data = await response.json()
   const accessToken = data.access_token
-  console.log(JSON.stringify(data))
+  const fb = new FacebookClient(accessToken)
+  const me = await fb.getUserInfo()
+
+  await prisma.authUser.upsert({
+    where: {
+      id: me.id
+    },
+    create: {
+      id: me.id,
+      name: me.name
+    }, update: {
+      name: me.name
+    }
+  })
+
   return res.redirect("http://localhost:3000")
 })
 
