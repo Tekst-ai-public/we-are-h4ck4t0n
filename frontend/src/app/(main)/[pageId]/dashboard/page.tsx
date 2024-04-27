@@ -33,7 +33,15 @@ export default function Page({ params }: { params: { pageId: string } }) {
       }
     };
 
+    const interval = setInterval(() => {
+      fetchData()
+    }, 5000)
+
     fetchData();
+
+    return () => {
+      clearInterval(interval)
+    }
   }, []);
 
   return (
