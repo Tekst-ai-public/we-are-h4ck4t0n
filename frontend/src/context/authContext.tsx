@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { AuthLoading } from '@/app/(auth)/components/AuthLoading';
 
@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextProps>({
   },
   apiFetch: async () => {
     throw new Error('Api fetch not implemented');
-  }
+  },
 });
 
 export function useAuth() {
@@ -32,9 +32,17 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-
+  const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState();
+
+  useEffect(() => {
+    if (!pathname.includes('/login') && !loading && !user) {
+      window.location.href = process.env.NEXT_PUBLIC_API_BASE_URL + '/login';
+      return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   useEffect(() => {
     apiFetch('/me').then(async (res) => {
