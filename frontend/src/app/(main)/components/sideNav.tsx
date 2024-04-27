@@ -1,66 +1,93 @@
+'use client';
+
 import Link from 'next/link';
-import { Facebook, Home, LineChart, Settings, Sparkles } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import Image from 'next/image';
+import { BarChart4Icon, ChevronLeft, ChevronRight, Settings2, Sigma, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+
+const routes = [
+  { route: '/dashboard', text: 'Dashboard', logo: () => <BarChart4Icon /> },
+  { route: '/ai', text: 'Models', logo: () => <Sparkles /> },
+  { route: '/analytics', text: 'Analytics', logo: () => <Sigma /> },
+  { route: '/settings', text: 'Settings', logo: () => <Settings2 />, align: 'end' },
+];
 
 export default function SideNav() {
+  const [collapse, setCollapse] = useState(true);
+  const pathname = usePathname();
+
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-        <div>
-          <Facebook className="h-4 w-4 transition-all group-hover:scale-110" />
-          <span className="sr-only">Acme Inc</span>
+    <aside
+      className={cn(
+        'fixed inset-y-0 left-0 z-10 hidden flex-col border-r bg-white sm:flex ',
+        collapse ? 'w-14' : 'w-60'
+      )}
+    >
+      <nav className="flex flex-col items-center gap-4 px-2 pt-3">
+        <div className="relative bg-white rounded-full h-11 w-11">
+          <Image
+            src="/logo.svg"
+            width={30}
+            height={0}
+            alt="logo"
+            className="h-auto absolute-center ml-[2px]"
+          />
         </div>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="/dashboard"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            >
-              <Home className="h-5 w-5" />
-              <span className="sr-only">Dashboard</span>
+        {routes
+          .filter((route) => route.align !== 'end')
+          .map((route, index) => (
+            <Link href={route.route} key={index} className="flex-center w-full cursor-pointer">
+              {collapse ? (
+                <Button
+                  variant={pathname.includes(route.route) ? 'outline' : 'ghost'}
+                  className="p-0 h-10 w-10"
+                >
+                  {route.logo()}
+                </Button>
+              ) : (
+                <Button
+                  variant={pathname.includes(route.route) ? 'outline' : 'ghost'}
+                  className="gap-2 w-full"
+                >
+                  {route.logo()}
+                  {route.text}
+                </Button>
+              )}
             </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right">Dashboard</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="/ai"
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            >
-              <Sparkles className="h-5 w-5" />
-              <span className="sr-only">AI</span>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right">AI</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="/analytics"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            >
-              <LineChart className="h-5 w-5" />
-              <span className="sr-only">Analytics</span>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right">Analytics</TooltipContent>
-        </Tooltip>
+          ))}
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              href="/settings"
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-            >
-              <Settings className="h-5 w-5" />
-              <span className="sr-only">Settings</span>
+        {routes
+          .filter((route) => route.align === 'end')
+          .map((route, index) => (
+            <Link href={route.route} key={index} className="flex-center w-full cursor-pointer">
+              {collapse ? (
+                <Button
+                  variant={pathname.includes(route.route) ? 'outline' : 'ghost'}
+                  className="p-0 h-10 w-10"
+                >
+                  {route.logo()}
+                </Button>
+              ) : (
+                <Button
+                  variant={pathname.includes(route.route) ? 'outline' : 'ghost'}
+                  className="gap-2 w-full"
+                >
+                  {route.logo()}
+                  {route.text}
+                </Button>
+              )}
             </Link>
-          </TooltipTrigger>
-          <TooltipContent side="right">Settings</TooltipContent>
-        </Tooltip>
+          ))}
       </nav>
+      <div className="ml-auto ">
+        <Button variant="ghost" className="w-8 h-8 p-0 mr-3 mb-2" onClick={() => setCollapse(!collapse)}>
+          {collapse ? <ChevronRight className="shrink-0" /> : <ChevronLeft className="shrink-0" />}
+        </Button>
+      </div>
     </aside>
   );
 }
