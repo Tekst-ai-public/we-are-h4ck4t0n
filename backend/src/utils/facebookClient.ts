@@ -1,11 +1,11 @@
 export default class FacebookClient {
-    private _accessToken: string;
-    private _graphApiVersion: string;
+  private _accessToken: string;
+  private _graphApiVersion: string;
 
-    constructor(accessToken: string, graphApiVersion: string) {
-        this._accessToken = accessToken;
-        this._graphApiVersion = graphApiVersion;
-    }
+  constructor(accessToken: string, graphApiVersion: string = "19.0") {
+    this._accessToken = accessToken;
+    this._graphApiVersion = graphApiVersion;
+  }
 
     public async getUserInfo(): Promise<any> {
         

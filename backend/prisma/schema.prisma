@@ -44,3 +44,9 @@ model Users {
   posts Posts[]
   comments Comments[]
 }
+
+model AuthUser {
+  id String @id
+  name String @default("")
+  token String
+}
