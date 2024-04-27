@@ -162,7 +162,11 @@ export default function Page({ params }: { params: { pageId: string } }) {
       <Card className="col-span-4 min-h-[500px]">
         <CardHeader className="flex flex-row justify-between">
           <CardTitle>Live Feed</CardTitle>
-          <Select value={selectedLabel} onValueChange={(newValue) => setSelectedLabel(newValue)}>
+          <Select
+            defaultValue="all"
+            value={selectedLabel}
+            onValueChange={(newValue) => setSelectedLabel(newValue)}
+          >
             <SelectTrigger className="w-[350px]">
               <SelectValue placeholder="select a label" />
             </SelectTrigger>
@@ -207,7 +211,9 @@ export default function Page({ params }: { params: { pageId: string } }) {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem>Go to post</DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <a href={`https://facebook.com/${comment.postId}`}>Go to post</a>
+                      </DropdownMenuItem>
                       <DropdownMenuItem>Hide</DropdownMenuItem>
                       <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
