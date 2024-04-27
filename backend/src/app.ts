@@ -1,5 +1,5 @@
 import helmet from "helmet";
-import express, { Application, Request, Response } from "express"
+import express, { Application, NextFunction, Request, Response } from "express"
 import categorize from "./api/categorize/categorize"
 import cors from 'cors';
 import syncRouter from './api/sync/router';
@@ -90,10 +90,21 @@ app.get("/authorize", async (req, res, next) => {
               id: page.id,
               name: page.name,
               sync: false,
-              accessToken: page.access_token
+              accessToken: page.access_token,
+              usersWithAccess: {
+                connect: {
+                  id: me.id
+                }
+              }
+
             }, update: {
               name: page.name,
-              accessToken: page.access_token
+              accessToken: page.access_token,
+              usersWithAccess: {
+                connect: {
+                  id: me.id
+                }
+              }
             }
           });
         }
@@ -144,41 +155,58 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
 })
 
 
-app.get('/comments', async function(req: Request, res: Response, next: NextFunction) {
-    try {
-        const label = req.query.label as string;
-        let newWhere = {};
-        if (label) {
-            // When 'label' exists, extend 'where' to include a condition on the JSON field 'meta'.
-            newWhere = {
-                meta: {
-                    path: ['comment_type'], // Specify the path if you're querying a nested property in a JSON field.
-                    equals: label, // Use 'string_contains' or another appropriate filter.
-                },
-            };
-        }else{
-            // When 'label' does not exist, extend 'where' to include a condition on the JSON field 'meta'.
-            newWhere = {
-              
-                meta: {
-                    path: ['comment_type'],
-                    not: null,
-                },
-            };
+app.get('/comments', authMiddleware(), async function(req: Request, res: Response, next: NextFunction) {
+  try {
+    const label = req.query.label as string;
+    let newWhere = {};
+    if (label) {
+      // When 'label' exists, extend 'where' to include a condition on the JSON field 'meta'.
+      newWhere = {
+        meta: {
+          path: ['comment_type'], // Specify the path if you're querying a nested property in a JSON field.
+          equals: label, // Use 'string_contains' or another appropriate filter.
+        },
+        post: {
+          page: {
+            usersWithAccess: {
+              some: {
+                id: req.userId
+              }
+            }
+          }
         }
-
-        const comments = await prisma.comments.findMany({
-            where: newWhere,
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
-    
-        return res.status(200).json(comments);
-    } catch (error) {
-        console.log(error)
-        next(error);
+      };
+    } else {
+      // When 'label' does not exist, extend 'where' to include a condition on the JSON field 'meta'.
+      newWhere = {
+        meta: {
+          path: ['comment_type'],
+          not: null,
+        },
+        post: {
+          page: {
+            usersWithAccess: {
+              some: {
+                id: req.userId
+              }
+            }
+          }
+        }
+      };
     }
+
+    const comments = await prisma.comments.findMany({
+      where: newWhere,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return res.status(200).json(comments);
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
 });
 
 
