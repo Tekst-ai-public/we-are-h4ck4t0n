@@ -1,8 +1,12 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { ReactNode, createContext, useContext } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 import { AuthLoading } from '@/app/(auth)/components/AuthLoading';
+
+interface FetchResponse<T> extends Response {
+  json: () => Promise<T>;
+}
 
 type AuthContextProps = {
   login: (email: string, password: string) => Promise<void>;
@@ -26,6 +30,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathName = usePathname();
 
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    apiFetch("/me").then(async res => {
+      if (!res.ok) {
+        window.location.href = process.env.NEXT_PUBLIC_API_BASE_URL + "/login"
+        return
+      }
+      const data = await res.json()
+      setUser(data)
+      setLoading(false)
+    })
+  }, [])
+
+  async function apiFetch<T = any>(path: string, init: RequestInit | undefined = {}): Promise<FetchResponse<T>> {
+    init.headers = {
+      'Content-Type': 'application/json',
+      ...init.headers,
+    };
+    const url = new URL(process.env.NEXT_PUBLIC_API_BASE_URL + path);
+    return fetch(`${url.toString()}`, {
+      ...init,
+      credentials: "include"
+    });
+  }
+
   async function login(email: string, password: string) {
     console.log(email, password);
   }
@@ -41,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={accessibleValues}>
-      {pathName !== '/login' || false ? <AuthLoading text="Loading..." /> : children}
+      {loading || !user ? <AuthLoading text="Loading..." /> : children}
     </AuthContext.Provider>
   );
 }

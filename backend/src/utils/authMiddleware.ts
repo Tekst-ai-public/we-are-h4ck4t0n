@@ -24,7 +24,7 @@ export function authMiddleware() {
       next()
     } catch (err) {
       console.error(err)
-      return res.status(403)
+      return res.status(403).json("unauthorized")
     }
   }
 }

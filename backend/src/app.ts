@@ -29,56 +29,68 @@ app.use((req, res, next) => {
   next()
 })
 
-app.get("/login", async (req, res) => {
-  const authUrl = "https://www.facebook.com/v19.0/dialog/oauth?"
-  const params = new URLSearchParams({
-    client_id: process.env.CLIENT_ID!,
-    redirect_uri: "http://localhost:8000/authorize",
-    scope: "email",
-    response_type: "code",
-    state: "{st=abc,ds=123}",
-    config_id: "1100666177855608"
-  })
-  const url = authUrl + params.toString()
-  return res.redirect(url)
+app.get("/login", async (req, res, next) => {
+  try {
+    const authUrl = "https://www.facebook.com/v19.0/dialog/oauth?"
+    const params = new URLSearchParams({
+      client_id: process.env.CLIENT_ID!,
+      redirect_uri: "http://localhost:8000/authorize",
+      scope: "email",
+      response_type: "code",
+      state: "{st=abc,ds=123}",
+      config_id: "1100666177855608"
+    })
+    const url = authUrl + params.toString()
+    return res.redirect(url)
+
+  } catch (err) {
+    next(err)
+  }
 })
 
-app.get("/authorize", async (req, res) => {
-  const code = req.query.code as string
-  const params = new URLSearchParams({
-    client_id: process.env.CLIENT_ID!,
-    client_secret: process.env.CLIENT_SECRET!,
-    redirect_uri: "http://localhost:8000/authorize",
-    code: code
-  })
-  const response = await fetch(`https://graph.facebook.com/v4.0/oauth/access_token?${params.toString()}`)
-  const data = await response.json()
-  const accessToken = data.access_token
-  const fb = new FacebookClient(accessToken)
-  const me = await fb.getUserInfo()
+app.get("/authorize", async (req, res, next) => {
+  try {
+    const code = req.query.code as string
+    const params = new URLSearchParams({
+      client_id: process.env.CLIENT_ID!,
+      client_secret: process.env.CLIENT_SECRET!,
+      redirect_uri: "http://localhost:8000/authorize",
+      code: code
+    })
+    const response = await fetch(`https://graph.facebook.com/v4.0/oauth/access_token?${params.toString()}`)
+    const data = await response.json()
+    const accessToken = data.access_token
+    const fb = new FacebookClient(accessToken)
+    const me = await fb.getUserInfo()
 
-  await prisma.authUser.upsert({
-    where: {
-      id: me.id
-    },
-    create: {
-      id: me.id,
-      name: me.name
-    }, update: {
-      name: me.name
-    }
-  })
+    await prisma.authUser.upsert({
+      where: {
+        id: me.id
+      },
+      create: {
+        id: me.id,
+        name: me.name,
+        token: accessToken
+      }, update: {
+        name: me.name,
+        token: accessToken
+      }
+    })
 
-  const token = jwt.sign({ id: me.id, name: me.name }, "SECRET", { expiresIn: "10d" })
+    const token = jwt.sign({ id: me.id, name: me.name }, "SECRET", { expiresIn: "10d" })
 
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: false,
-    maxAge: 10 * 24 * 60 * 60 * 1000,
-    path: "/",
-    sameSite: "lax"
-  })
-  return res.redirect("http://localhost:3000")
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+      path: "/",
+      sameSite: "lax"
+    })
+    return res.redirect("http://localhost:3000")
+
+  } catch (err) {
+    next(err)
+  }
 })
 
 app.get('/test', function(req: Request, res: Response) {
