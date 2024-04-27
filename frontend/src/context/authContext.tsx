@@ -28,7 +28,6 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const pathName = usePathname();
 
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState()
