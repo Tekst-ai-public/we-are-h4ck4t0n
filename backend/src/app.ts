@@ -148,7 +148,6 @@ app.get('/comments', async function(req: Request, res: Response, next: NextFunct
     try {
         const label = req.query.label as string;
         let newWhere = {};
-        console.log(`label: ${label}`);
         if (label) {
             // When 'label' exists, extend 'where' to include a condition on the JSON field 'meta'.
             newWhere = {
@@ -167,7 +166,6 @@ app.get('/comments', async function(req: Request, res: Response, next: NextFunct
                 },
             };
         }
-        console.log(`where: ${JSON.stringify(newWhere)}`);
 
         const comments = await prisma.comments.findMany({
             where: newWhere,
@@ -175,7 +173,6 @@ app.get('/comments', async function(req: Request, res: Response, next: NextFunct
                 createdAt: 'desc',
             },
         });
-        console.log(`comments: ${JSON.stringify(comments)}`);
     
         return res.status(200).json(comments);
     } catch (error) {
