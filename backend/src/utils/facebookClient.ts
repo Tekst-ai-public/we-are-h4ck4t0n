@@ -1,3 +1,5 @@
+import { Post } from "./facebookTypes";
+
 export default class FacebookClient {
   private _accessToken: string;
   private _graphApiVersion: string;
@@ -70,9 +72,9 @@ export default class FacebookClient {
         return response;
     }
 
-    public async getPostsByPage(id: string,token?: string): Promise<any> {
+    public async getPostsByPage(id: string,token?: string): Promise<{data:Post[]}> {
         console.log(`token is ${token}`);
-        const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/posts`, 'GET',undefined,undefined,token);
+        const response = await this.fetch<{data:Post[]}>(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/posts`, 'GET',undefined,undefined,token);
         return response;
     }
 
