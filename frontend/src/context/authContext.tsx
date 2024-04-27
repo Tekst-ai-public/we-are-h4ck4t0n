@@ -12,7 +12,7 @@ interface AuthContextProps {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   apiFetch: <T>(path: string, init: RequestInit | undefined) => Promise<FetchResponse<T>>
-};
+}
 
 const AuthContext = createContext<AuthContextProps>({
   login: async () => {

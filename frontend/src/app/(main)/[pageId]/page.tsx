@@ -16,14 +16,14 @@ export default function Page({ params }: { params: { pageId: string } }) {
     apiFetch("/pages", {}).then(async res => {
       const data = await res.json()
       if (res.ok) {
-        // @ts-ignore
+        // @ts-expect-error
         setPages(data.data)
       }
     })
   }, [])
 
   useEffect(() => {
-    // @ts-ignore
+    // @ts-expect-error
     if (pages.some(page => page.id === params.pageId)) {
       setCurrentPage(params.pageId)
     }
