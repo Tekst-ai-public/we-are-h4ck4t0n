@@ -40,6 +40,16 @@ async function syncPost(post: Post, pageId: string, fb: FacebookClient) {
   const settings = await getSettings(pageId);
 
   for (const comment of comments.data) {
+    const commentEntry = await prisma.comments.findUnique({
+      where: {
+        id: comment.id
+      }
+    })
+    if (commentEntry) {
+      // comments are sorted by date (reverse_chronological), so if we find a comment that already exists, we can stop
+      break;
+    }
+
     const commentType = await geAI(comment.message, settings);
 
     const author = await prisma.users.findFirst({
