@@ -19,6 +19,8 @@ model Posts {
   updatedAt  DateTime   @updatedAt
   createdAt  DateTime   @default(now())
   author Users @relation(fields: [authorId], references: [id])
+  page Page @relation(fields: [pageId], references: [id])
+  pageId String
   authorId String
   content String
   meta Json
@@ -49,4 +51,13 @@ model AuthUser {
   id String @id
   name String @default("")
   token String
+}
+
+model Page {
+  id String @id @unique
+  createdAt  DateTime   @default(now())
+  name String
+  posts Posts[]
+  sync Boolean @default(false)
+  accessToken String
 }
