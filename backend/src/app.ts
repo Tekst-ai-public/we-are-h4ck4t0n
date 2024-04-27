@@ -116,7 +116,7 @@ app.get("/authorize", async (req, res, next) => {
       secure: process.env.APP_BASE_URL!.includes("localhost") ? false : true,
       maxAge: 10 * 24 * 60 * 60 * 1000,
       path: "/",
-      sameSite: "lax",
+      sameSite: process.env.APP_BASE_URL!.includes("localhost") ? "lax" : "none",
       domain: process.env.APP_BASE_URL!.includes("localhost") ? undefined : ".vercel.app"
     })
     return res.redirect(process.env.APP_BASE_URL!)
