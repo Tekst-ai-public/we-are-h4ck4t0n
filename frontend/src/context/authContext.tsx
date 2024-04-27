@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
-    router.push('/login');
+    await apiFetch("/logout")
   }
 
   const accessibleValues: AuthContextProps = {

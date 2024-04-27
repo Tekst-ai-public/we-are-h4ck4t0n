@@ -47,6 +47,12 @@ app.get("/login", async (req, res) => {
   return res.redirect(url)
 })
 
+app.get("/logout", async (req, res) => {
+
+  res.clearCookie("jwt")
+  return res.redirect("/login")
+})
+
 app.get("/authorize", async (req, res, next) => {
   try {
     const code = req.query.code as string

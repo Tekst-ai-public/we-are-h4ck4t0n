@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 
 export default function Page({ params }: { params: { pageId: string } }) {
 
-  const [pages, setPages] = useState<any>([])
+  const [pages, setPages] = useState<any[]>([])
   const [currentPage, setCurrentPage] = useState<any>()
   const { apiFetch } = useAuth()
   const router = useRouter()
@@ -38,7 +38,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
   if (!currentPage) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Select value={currentPage} onValueChange={newValue => setCurrentPage(newValue)}>
+        <Select disabled={pages.length > 0} value={currentPage} onValueChange={newValue => setCurrentPage(newValue)}>
           <SelectTrigger className="w-[350px]">
             <SelectValue placeholder="select a page" />
           </SelectTrigger>
