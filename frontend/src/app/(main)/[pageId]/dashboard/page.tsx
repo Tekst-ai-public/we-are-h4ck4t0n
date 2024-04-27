@@ -46,7 +46,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
   const [numbersData, setNumbersData] = useState<NumbersData | null>(null);
   const [isNumbersLoading, setIsNumbersLoading] = useState<boolean>(true);
   const [labels, setLabels] = useState<any[]>([]);
-  const [selectedLabel, setSelectedLabel] = useState('');
+  const [selectedLabel, setSelectedLabel] = useState('all');
   const [labelsLoading, setLabelsLoading] = useState(true);
   const [comments, setComments] = useState<Comments[]>([]);
 
