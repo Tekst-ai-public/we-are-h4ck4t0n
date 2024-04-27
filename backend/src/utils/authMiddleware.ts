@@ -21,6 +21,7 @@ export function authMiddleware() {
 
       const fb = new FacebookClient(user.token)
       req.fb = fb
+      req.userId = uid
       next()
     } catch (err) {
       console.error(err)
