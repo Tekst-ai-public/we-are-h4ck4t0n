@@ -1,5 +1,4 @@
-import Image from "next/image"
-import { Search } from 'lucide-react';
+import { Search, User } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   DropdownMenu,
@@ -24,14 +23,8 @@ export default function Header() {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-            <Image
-              src="/user-image.png"
-              width={55}
-              height={55}
-              alt="Avatar"
-              className="object-cover h-full"
-            />
+          <Button variant="secondary" size="icon" className="overflow-hidden rounded-full">
+            <User color="white" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
