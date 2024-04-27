@@ -1,5 +1,5 @@
 import helmet from "helmet";
-import express, { Application, Request, Response } from "express"
+import express, { Application, NextFunction, Request, Response } from "express"
 import categorize from "./api/categorize/categorize"
 import cors from 'cors';
 import syncRouter from './api/sync/router';
@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser"
 import sync from "./utils/sync";
 import pageRouter from "./api/page/router";
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 declare module "express" {
   interface Request {
@@ -27,7 +27,7 @@ app.use(helmet());
 app.use(express.json({ limit: "5MB" }));
 
 app.use(cookieParser())
-app.use(cors({ origin: ['https://we-are-h4ck4t0n.vercel.app/dashboard', 'http://localhost:3000'], credentials: true }));
+app.use(cors({ origin: ['https://we-are-h4ck4t0n.vercel.app', 'http://localhost:3000'], credentials: true }));
 
 app.use((req, res, next) => {
   console.log(req.path)
@@ -38,7 +38,7 @@ app.get("/login", async (req, res) => {
   const authUrl = "https://www.facebook.com/v19.0/dialog/oauth?"
   const params = new URLSearchParams({
     client_id: process.env.CLIENT_ID!,
-    redirect_uri: "http://localhost:8000/authorize",
+    redirect_uri: process.env.API_BASE_URL! + "/authorize",
     // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_content,pages_show_list,public_profile,email",
     scope: "pages_read_engagement,pages_show_list,pages_read_user_content,pages_manage_posts,email",
     response_type: "code",
@@ -55,7 +55,7 @@ app.get("/authorize", async (req, res, next) => {
     const params = new URLSearchParams({
       client_id: process.env.CLIENT_ID!,
       client_secret: process.env.CLIENT_SECRET!,
-      redirect_uri: "http://localhost:8000/authorize",
+      redirect_uri: process.env.API_BASE_URL! + "/authorize",
       code: code
     })
     const response = await fetch(`https://graph.facebook.com/v4.0/oauth/access_token?${params.toString()}`)
@@ -89,10 +89,21 @@ app.get("/authorize", async (req, res, next) => {
               id: page.id,
               name: page.name,
               sync: false,
-              accessToken: page.access_token
+              accessToken: page.access_token,
+              usersWithAccess: {
+                connect: {
+                  id: me.id
+                }
+              }
+
             }, update: {
               name: page.name,
-              accessToken: page.access_token
+              accessToken: page.access_token,
+              usersWithAccess: {
+                connect: {
+                  id: me.id
+                }
+              }
             }
           });
         }
@@ -107,7 +118,7 @@ app.get("/authorize", async (req, res, next) => {
       path: "/",
       sameSite: "lax"
     })
-    return res.redirect("http://localhost:3000")
+    return res.redirect(process.env.APP_BASE_URL!)
 
   } catch (err) {
     next(err)
@@ -141,6 +152,53 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
     next(err)
   }
 })
+
+
+app.get('/comments', authMiddleware(), async function(req: Request, res: Response, next: NextFunction) {
+  try {
+    const label = req.query.label as string;
+    const pageId = req.query.pageId as string
+
+    let newWhere = {};
+    if (label) {
+      // When 'label' exists, extend 'where' to include a condition on the JSON field 'meta'.
+      newWhere = {
+        meta: {
+          path: ['comment_type'], // Specify the path if you're querying a nested property in a JSON field.
+          equals: label, // Use 'string_contains' or another appropriate filter.
+        },
+        post: {
+          pageId: pageId
+        }
+      };
+    } else {
+      // When 'label' does not exist, extend 'where' to include a condition on the JSON field 'meta'.
+      newWhere = {
+        meta: {
+          path: ['comment_type'],
+          not: null,
+        },
+        post: {
+          pageId: pageId
+        }
+      };
+    }
+
+    const comments = await prisma.comments.findMany({
+      where: newWhere,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return res.status(200).json(comments);
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
+});
+
+
 
 app.use("/page", pageRouter);
 app.use("/posts/numbers", numbers);

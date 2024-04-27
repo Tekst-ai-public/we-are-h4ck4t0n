@@ -15,6 +15,7 @@ app.get('/', async function(req: Request, res: Response, next: NextFunction) {
     }
 });
 
+
 app.get('/:id', async function(req: Request, res: Response, next: NextFunction) {
     try {
         const posts = await prisma.posts.findUnique({
@@ -59,5 +60,6 @@ app.get('/:id/comments/:commentId', async function(req: Request, res: Response, 
         next(error);
     }
 });
+
 
 export default app;

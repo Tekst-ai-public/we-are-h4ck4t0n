@@ -48,14 +48,16 @@ model AuthUser {
   id    String @id
   name  String @default("")
   token String
+  pages Page[]
 }
 
 model Page {
-  id          String   @id @unique
-  createdAt   DateTime @default(now())
-  name        String
-  posts       Posts[]
-  sync        Boolean  @default(false)
-  accessToken String
-  settings Json @default("{}")
+  id              String     @id @unique
+  createdAt       DateTime   @default(now())
+  name            String
+  posts           Posts[]
+  sync            Boolean    @default(false)
+  accessToken     String
+  settings        Json       @default("{}")
+  usersWithAccess AuthUser[]
 }
