@@ -157,6 +157,8 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
 app.get('/comments', authMiddleware(), async function(req: Request, res: Response, next: NextFunction) {
   try {
     const label = req.query.label as string;
+    const pageId = req.query.pageId as string
+
     let newWhere = {};
     if (label) {
       // When 'label' exists, extend 'where' to include a condition on the JSON field 'meta'.
@@ -166,13 +168,7 @@ app.get('/comments', authMiddleware(), async function(req: Request, res: Respons
           equals: label, // Use 'string_contains' or another appropriate filter.
         },
         post: {
-          page: {
-            usersWithAccess: {
-              some: {
-                id: req.userId
-              }
-            }
-          }
+          pageId: pageId
         }
       };
     } else {
@@ -183,13 +179,7 @@ app.get('/comments', authMiddleware(), async function(req: Request, res: Respons
           not: null,
         },
         post: {
-          page: {
-            usersWithAccess: {
-              some: {
-                id: req.userId
-              }
-            }
-          }
+          pageId: pageId
         }
       };
     }
