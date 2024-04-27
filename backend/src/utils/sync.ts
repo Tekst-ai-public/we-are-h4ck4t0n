@@ -7,10 +7,10 @@ export default async function sync(pageId: string, fb: FacebookClient) {
 
   try {
     const posts = await fb.getPostsByPage(pageId);
-    for (const post of posts.data) {
+    await Promise.allSettled(posts.data.map(async post => {
       console.log(`syncing post ${post.id}`);
       await syncPost(post, pageId, fb);
-    }
+    }))
     return posts;
   }
   catch (error) {
@@ -39,7 +39,9 @@ async function syncPost(post: Post, pageId: string, fb: FacebookClient) {
   const comments = await fb.getCommentsByPost(post.id);
   const settings = await getSettings(pageId);
 
-  for (const comment of comments.data) {
+  console.log(`processing ${comments.data.length} comments`)
+
+  await Promise.allSettled(comments.data.map(async comment => {
     const commentEntry = await prisma.comments.findUnique({
       where: {
         id: comment.id
@@ -47,19 +49,18 @@ async function syncPost(post: Post, pageId: string, fb: FacebookClient) {
     })
     if (commentEntry) {
       // comments are sorted by date (reverse_chronological), so if we find a comment that already exists, we can stop
-      break;
+      return;
     }
 
     const commentType = await geAI(comment.message, settings);
 
     const author = await prisma.users.findFirst({
       where: {
-        id: comment.from.id
+        id: comment.from?.id
       }
     })
-    if (!author) {
+    if (!author && comment.from && comment.from.id) {
       await prisma.users.create({
-
         data: {
           id: comment.from.id,
           name: comment.from.name,
@@ -75,14 +76,15 @@ async function syncPost(post: Post, pageId: string, fb: FacebookClient) {
         id: comment.id,
         createdAt: new Date(comment.created_time).toISOString(),
         content: comment.message,
-        authorId: author ? author.id : comment.from.id,
+        authorId: author ? author.id : comment.from?.id,
         meta: commentType as any,
         postId: post.id,
       }, update: {
         content: comment.message,
       }
     })
-  }
+
+  }))
 }
 
 
