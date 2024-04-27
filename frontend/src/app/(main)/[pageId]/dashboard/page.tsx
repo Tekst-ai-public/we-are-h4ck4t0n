@@ -215,7 +215,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
                       key={comment.id}
                     >
                       <div className="w-1/2 flex items-center">
-                        <div className="w-28 text-sm text-slate-500">
+                        <div className="w-28 text-sm text-slate-500 shrink-0">
                           {new Jate(comment.createdAt).format('dd/MM - hh:mm')}
                         </div>
                         <div>{comment.content}</div>
@@ -266,7 +266,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
                   key={comment.id}
                 >
                   <div className="w-1/2 flex items-center">
-                    <div className="w-28 text-sm text-slate-500">
+                    <div className="w-28 text-sm text-slate-500 shrink-0">
                       {new Jate(comment.createdAt).format('dd/MM - hh:mm')}
                     </div>
                     <div>{comment.content}</div>
