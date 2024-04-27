@@ -212,7 +212,9 @@ export default function Page({ params }: { params: { pageId: string } }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem>
-                        <a href={`https://facebook.com/${comment.postId}`}>Go to post</a>
+                        <a href={`https://facebook.com/${comment.postId}`} target="_blank">
+                          Go to post
+                        </a>
                       </DropdownMenuItem>
                       <DropdownMenuItem>Hide</DropdownMenuItem>
                       <DropdownMenuItem>Delete</DropdownMenuItem>

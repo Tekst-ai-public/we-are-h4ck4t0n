@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/authContext';
 import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils';
 
 type LabelWithExamples = {
   label: string;
@@ -147,7 +148,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Manage your models
-            <div className="flex items-center gap-3">
+            <div className={cn('flex items-center gap-3 text-lg font-medium ')}>
               Sync
               <Switch checked={checked} onCheckedChange={changeSync} />
             </div>
