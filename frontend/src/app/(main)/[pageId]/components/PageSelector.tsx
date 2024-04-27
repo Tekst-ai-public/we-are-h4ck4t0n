@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import {
@@ -23,6 +23,7 @@ export default function PagesSelector() {
   const { apiFetch } = useAuth();
   const router = useRouter();
   const params = useParams();
+  const pathname = usePathname();
 
   async function fetchPages() {
     setLoading(true);
@@ -51,10 +52,10 @@ export default function PagesSelector() {
   }, [params.pageId, pages]);
 
   useEffect(() => {
-    if (currentPage) {
+    if (currentPage && pathname.split('/').length === 2) {
       router.push(`/${currentPage}/dashboard`);
     }
-  }, [currentPage, router]);
+  }, [currentPage, router, pathname]);
 
   return (
     <div className="w-full h-full">
