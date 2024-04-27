@@ -10,7 +10,8 @@
     "dockerrun": "sudo docker-compose up",
     "lint:check": "eslint ./src --ext .ts --max-warnings 0",
     "lint:fix": "eslint ./src --ext .ts --fix",
-    "fix": "npm run lint:fix & npm run format:fix"
+    "fix": "npm run lint:fix & npm run format:fix",
+    "startprod": "node dist/app.js"
   },
   "keywords": [],
   "author": "",
