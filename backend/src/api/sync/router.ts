@@ -1,12 +1,12 @@
 import express from 'express';
 import sync from './sync';
-import fillpages from './fillpages';
-import syncpages from './syncPage';
+import { fillPages } from './fillPages';
+import { syncPages } from './syncPages';
 const router = express.Router();
 
 router.get('/', sync);
 
-router.get('/fillpages',fillpages)
-router.get('/syncpages',syncpages)
+router.get('/fillpages', fillPages)
+router.get('/syncpages', syncPages)
 
 export default router;

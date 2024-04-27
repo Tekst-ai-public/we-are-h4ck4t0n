@@ -16,8 +16,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
     apiFetch("/pages", {}).then(async res => {
       const data = await res.json()
       if (res.ok) {
-        // @ts-expect-error
-        setPages(data.data)
+        setPages(data)
       }
     })
   }, [])
