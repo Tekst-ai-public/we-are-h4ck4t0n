@@ -1,7 +1,7 @@
 # we-are-h4ck4t0n
 easy dub, thanks for tutorial
 
-# when you run a migration a 3AM 
+# when you run a migration at 3AM 
 ![sweating-nervous](https://github.com/lancedw/we-are-h4ck4t0n/assets/86409464/b693db89-b250-42a7-af21-3af136cbc527)
 
 
