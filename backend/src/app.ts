@@ -112,7 +112,7 @@ app.get("/authorize", async (req, res, next) => {
     const token = jwt.sign({ id: me.id, name: me.name }, "SECRET", { expiresIn: "10d" })
 
     res.cookie("jwt", token, {
-      httpOnly: true,
+      httpOnly: process.env.APP_BASE_URL!.includes("localhost") ? false : true,
       secure: false,
       maxAge: 10 * 24 * 60 * 60 * 1000,
       path: "/",
