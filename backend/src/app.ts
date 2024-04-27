@@ -3,6 +3,7 @@ import express, { Application, Request, Response } from "express"
 import categorize from "./categorize"
 import cors from 'cors';
 import postsRouter from './api/posts/router';
+import syncRouter from './api/sync/router';
 
 const PORT = 8000;
 
@@ -56,6 +57,7 @@ app.get('/test', function(req: Request, res: Response) {
 
 app.use("/categorize", categorize);
 app.use("/posts", postsRouter);
+app.use("/sync", syncRouter);
 
 const server = app.listen(PORT, () => {
   console.log(`Environment: ${process.env.NODE_ENV}`);

@@ -8,7 +8,7 @@ export default class FacebookClient {
     }
 
     public async getUserInfo(): Promise<any> {
-        const response = await fetch(`https://graph.facebook.com/v${this._graphApiVersion}/me?access_token=${this._accessToken}`);
+        const response = await fetch(`https://graph.facebook.com/${this._graphApiVersion}/me?access_token=${this._accessToken}`);
         const data = await response.json();
 
         return data;
