@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser"
 import sync from "./utils/sync";
 import pageRouter from "./api/page/router";
 
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 declare module "express" {
   interface Request {
