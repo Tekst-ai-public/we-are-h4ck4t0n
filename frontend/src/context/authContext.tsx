@@ -23,7 +23,7 @@ const AuthContext = createContext<AuthContextProps>({
   },
   apiFetch: async () => {
     throw new Error('Api fetch not implemented');
-  },
+  }
 });
 
 export function useAuth() {
