@@ -8,11 +8,19 @@ export default class FacebookClient {
     }
 
     public async getUserInfo(): Promise<any> {
-        const response = await fetch(`https://graph.facebook.com/v${this._graphApiVersion}/me?access_token=${this._accessToken}`);
+        const headers = { 
+            'Authorization': `Bearer ${this._accessToken}`
+        }
+        const response = await fetch(`https://graph.facebook.com/v${this._graphApiVersion}/me`, {
+            method: 'GET',
+            headers: headers
+        });
         const data = await response.json();
 
         return data;
     }
+
+
 
 
 }
