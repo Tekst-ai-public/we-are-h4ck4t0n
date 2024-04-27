@@ -19,6 +19,7 @@ export type CategorizeInput = {
 export async function categorize(input: CategorizeInput): Promise<string> {
     // Format the input into a suitable format for the POST request
     const rawPrompt = formatPrompt(input);
+    console.log(rawPrompt);
     const body = {
         model: "meta-llama/Llama-3-70b-chat-hf",
   max_tokens: 30,
