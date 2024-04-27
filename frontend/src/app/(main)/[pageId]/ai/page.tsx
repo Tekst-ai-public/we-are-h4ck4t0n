@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/authContext';
+import { Switch } from '@/components/ui/switch';
 
 type LabelWithExamples = {
   label: string;
@@ -18,23 +19,36 @@ type LabelWithExamples = {
 export default function Page({ params }: { params: { pageId: string } }) {
   const [prompt, setPrompt] = useState('');
   const [labels, setLabels] = useState<LabelWithExamples[]>([]);
-  const [loading, setLoading] = useState(true)
-  const { apiFetch } = useAuth()
+  const [loading, setLoading] = useState(true);
+  const [checked, setChecked] = useState(false);
+  const { apiFetch } = useAuth();
 
   useEffect(() => {
-    apiFetch<any>(`/page/settings?pageId=${params.pageId}`).then(async (res) => {
-      const data = await res.json();
-      setPrompt(data.prompt?.sysprompt || '');
-      const cleanLabels =
-        data.prompt?.labels?.map((label: any) => {
-          return {
-            label: label,
-            examples: data.prompt?.examples?.filter((ex: any) => ex.output.comment_type === label),
-          };
-        }) || [];
-      setLabels(cleanLabels);
-      setLoading(false);
-    });
+    apiFetch<any>(`/page/settings?pageId=${params.pageId}`)
+      .then(async (res) => {
+        const data = await res.json();
+        const settings = data.settings;
+        if (settings) {
+          setPrompt(settings.prompt?.sysprompt || '');
+          const cleanLabels =
+            settings.prompt?.labels?.map((label: any) => {
+              return {
+                label: label,
+                examples: settings.prompt?.examples
+                  ?.filter((ex: any) => ex.output.comment_type === label)
+                  .map((comment) => comment.comment),
+              };
+            }) || [];
+          setLabels(cleanLabels);
+        }
+
+        setChecked(data.sync);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error('Loading failed');
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -83,14 +97,18 @@ export default function Page({ params }: { params: { pageId: string } }) {
         body: JSON.stringify({
           prompt: {
             sysprompt: prompt,
-            labels: labels.map(l => l.label),
-            examples: labels.map(l => l.examples.map(ex => {
-              return {
-                comment: ex,
-                output: { comment_type: l.label }
-              }
-            })).flat()
-          }
+            labels: labels.map((l) => l.label),
+            examples: labels
+              .map((l) =>
+                l.examples.map((ex) => {
+                  return {
+                    comment: ex,
+                    output: { comment_type: l.label },
+                  };
+                })
+              )
+              .flat(),
+          },
         }),
       });
       const data = await res.json();
@@ -105,11 +123,35 @@ export default function Page({ params }: { params: { pageId: string } }) {
     }
   }
 
+  async function changeSync(checked: boolean) {
+    try {
+      const res = await apiFetch(`/page/settings/sync?pageId=${params.pageId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ sync: checked }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(`Error saving settings: ${data}`);
+      }
+      setChecked(checked);
+      toast.success('Saved');
+    } catch (error) {
+      console.log(error);
+      toast.error('Saving failed');
+    }
+  }
+
   return (
     <div className="w-full h-full">
       <Card>
         <CardHeader>
-          <CardTitle>Manage your models</CardTitle>
+          <CardTitle className="flex items-center justify-between">
+            Manage your models
+            <div className="flex items-center gap-3">
+              Sync
+              <Switch checked={checked} onCheckedChange={changeSync} />
+            </div>
+          </CardTitle>
         </CardHeader>
         <CardContent className="px-10">
           <div className="w-full">
