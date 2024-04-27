@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { categorize,CategorizeInput } from "./utils/categorizeutils";
+import { categorize,CategorizeInput } from "../../utils/categorizeutils";
 const app = express.Router();
 
 
