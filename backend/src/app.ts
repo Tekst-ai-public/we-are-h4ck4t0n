@@ -5,14 +5,24 @@ import cors from 'cors';
 import postsRouter from './api/posts/router';
 import FacebookClient from "./utils/facebookClient";
 import prisma from "./utils/prisma";
+import jwt from "jsonwebtoken"
+import { authMiddleware } from "./utils/authMiddleware";
+import cookieParser from "cookie-parser"
 
 const PORT = 8000;
+
+declare module "express" {
+  interface Request {
+    fb: FacebookClient
+  }
+}
 
 const app: Application = express();
 app.use(helmet());
 app.use(express.json({ limit: "5MB" }));
 
-app.use(cors({ origin: 'https://we-are-h4ck4t0n.vercel.app/dashboard' }));
+app.use(cookieParser())
+app.use(cors({ origin: ['https://we-are-h4ck4t0n.vercel.app/dashboard', 'http://localhost:3000'], credentials: true }));
 
 app.use((req, res, next) => {
   console.log(req.path)
@@ -59,14 +69,33 @@ app.get("/authorize", async (req, res) => {
     }
   })
 
+  const token = jwt.sign({ id: me.id, name: me.name }, "SECRET", { expiresIn: "10d" })
+
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: false,
+    maxAge: 10 * 24 * 60 * 60 * 1000,
+    path: "/",
+    sameSite: "lax"
+  })
   return res.redirect("http://localhost:3000")
 })
 
 app.get('/test', function(req: Request, res: Response) {
+  console.log(JSON.stringify(req.cookies))
   return res.json({
     message: 'Test succeeded!',
   });
 });
+
+app.get("/me", authMiddleware(), async (req: Request, res, next) => {
+  try {
+    const me = await req.fb.getUserInfo()
+    return res.status(200).json(me)
+  } catch (err) {
+    next(err)
+  }
+})
 
 app.use("/categorize", categorize);
 app.use("/posts", postsRouter);

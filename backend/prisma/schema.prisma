@@ -46,6 +46,7 @@ model Users {
 }
 
 model AuthUser {
-  id Int @id
+  id String @id
   name String @default("")
+  token String
 }
