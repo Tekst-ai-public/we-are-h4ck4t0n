@@ -84,8 +84,8 @@ export default class FacebookClient {
     return response;
   }
 
-  public async getCommentsByPost(id: string, accessToken?: string): Promise<any> {
-    const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/comments`, 'GET', undefined, undefined, accessToken);
+  public async getCommentsByPost(id: string,accessToken?: string): Promise<any> {
+    const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/comments?filter=stream&order=reverse_chronological`, 'GET',undefined,undefined,accessToken);
     return response;
   }
 

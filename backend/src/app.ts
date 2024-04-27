@@ -4,6 +4,7 @@ import categorize from "./api/categorize/categorize"
 import cors from 'cors';
 import syncRouter from './api/sync/router';
 import posts from './api/posts/posts';
+import numbers from "./api/posts/numbers"
 import FacebookClient from "./utils/facebookClient";
 import prisma from "./utils/prisma";
 import jwt from "jsonwebtoken"
@@ -142,6 +143,7 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
 })
 
 app.use("/page", pageRouter);
+app.use("/posts/numbers", numbers);
 app.use("/categorize", categorize);
 app.use("/posts", posts);
 app.use("/sync", syncRouter);
@@ -167,23 +169,32 @@ app.use(function(err, req, res, _) {
   }
 });
 
+let isRunning = false
+
 setInterval(() => {
   try {
-    console.log("starting sync")
-    startSync()
+    if (!isRunning) {
+      isRunning = true
+      console.log("starting sync")
+      startSync()
+    }
   } catch (err) {
     console.error("something went wrong syncing")
   }
-}, 1000 * 30)
+}, 1000 * 4)
 
 async function startSync() {
+  const start = performance.now()
   const pages = await prisma.page.findMany({
     where: {
       sync: true
     }
   });
+  console.log(`syncing ${pages.length} pages`)
   await Promise.allSettled(pages.map(async page => {
     const fb = new FacebookClient(page.accessToken);
     await sync(page.id, fb);
   }))
+  isRunning = false
+  console.log(`FULL SYNC TOOK ${performance.now() - start}`)
 }
