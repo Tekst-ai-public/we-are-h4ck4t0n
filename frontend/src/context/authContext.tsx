@@ -11,7 +11,7 @@ interface FetchResponse<T> extends Response {
 interface AuthContextProps {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  apiFetch: <T>(path: string, init: RequestInit | undefined) => Promise<FetchResponse<T>>
+  apiFetch: <T>(path: string, init?: RequestInit) => Promise<FetchResponse<T>>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -22,8 +22,8 @@ const AuthContext = createContext<AuthContextProps>({
     throw new Error('Logout function not implemented');
   },
   apiFetch: async () => {
-    throw new Error("Api fetch not implemented")
-  }
+    throw new Error('Api fetch not implemented');
+  },
 });
 
 export function useAuth() {
@@ -33,30 +33,30 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState()
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState();
 
   useEffect(() => {
-    apiFetch("/me").then(async res => {
+    apiFetch('/me').then(async (res) => {
       if (!res.ok) {
-        window.location.href = process.env.NEXT_PUBLIC_API_BASE_URL + "/login"
-        return
+        window.location.href = process.env.NEXT_PUBLIC_API_BASE_URL + '/login';
+        return;
       }
-      const data = await res.json()
-      setUser(data)
-      setLoading(false)
-    })
-  }, [])
+      const data = await res.json();
+      setUser(data);
+      setLoading(false);
+    });
+  }, []);
 
-  async function apiFetch<T = any>(path: string, init: RequestInit | undefined = {}): Promise<FetchResponse<T>> {
-    init.headers = {
+  async function apiFetch<T = any>(path: string, init: RequestInit = {}): Promise<FetchResponse<T>> {
+    const headers = {
       'Content-Type': 'application/json',
-      ...init.headers,
+      ...init,
     };
     const url = new URL(process.env.NEXT_PUBLIC_API_BASE_URL + path);
     return fetch(`${url.toString()}`, {
-      ...init,
-      credentials: "include"
+      ...headers,
+      credentials: 'include',
     });
   }
 
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const accessibleValues: AuthContextProps = {
     login,
     logout,
-    apiFetch
+    apiFetch,
   };
 
   return (
