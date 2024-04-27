@@ -38,7 +38,7 @@ app.get("/login", async (req, res) => {
   const authUrl = "https://www.facebook.com/v19.0/dialog/oauth?"
   const params = new URLSearchParams({
     client_id: process.env.CLIENT_ID!,
-    redirect_uri: "http://localhost:8000/authorize",
+    redirect_uri: process.env.API_BASE_URL! + "/authorize",
     // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_content,pages_show_list,public_profile,email",
     scope: "pages_read_engagement,pages_show_list,pages_read_user_content,pages_manage_posts,email",
     response_type: "code",
@@ -55,7 +55,7 @@ app.get("/authorize", async (req, res, next) => {
     const params = new URLSearchParams({
       client_id: process.env.CLIENT_ID!,
       client_secret: process.env.CLIENT_SECRET!,
-      redirect_uri: "http://localhost:8000/authorize",
+      redirect_uri: process.env.API_BASE_URL! + "/authorize",
       code: code
     })
     const response = await fetch(`https://graph.facebook.com/v4.0/oauth/access_token?${params.toString()}`)
@@ -118,7 +118,7 @@ app.get("/authorize", async (req, res, next) => {
       path: "/",
       sameSite: "lax"
     })
-    return res.redirect("http://localhost:3000")
+    return res.redirect(process.env.APP_BASE_URL!)
 
   } catch (err) {
     next(err)
