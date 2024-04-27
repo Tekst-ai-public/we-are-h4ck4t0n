@@ -1,6 +1,5 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { BarChart4 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from "@/context/authContext";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -35,7 +34,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
         const response = await apiFetch<any>(`/page/settings?pageId=${params.pageId}`, {});
         const data = await response.json()
         if (response.ok) {
-          setLabels(["all", ...(data.prompt?.labels || [])])
+          setLabels(['all', ...(data.settings.prompt?.labels || [])]);
           setLabelsLoading(false)
         }
       } catch (error) {

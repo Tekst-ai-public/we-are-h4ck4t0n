@@ -230,17 +230,17 @@ app.use(function(err, req, res, _) {
 
 let isRunning = false
 
-// setInterval(() => {
-//   try {
-//     if (!isRunning) {
-//       isRunning = true;
-//       console.log('starting sync');
-//       startSync()
-//     }
-//   } catch (err) {
-//     console.error("something went wrong syncing")
-//   }
-// }, 1000 * 4)
+setInterval(() => {
+  try {
+    if (!isRunning) {
+      isRunning = true;
+      console.log('starting sync');
+      startSync();
+    }
+  } catch (err) {
+    console.error('something went wrong syncing');
+  }
+}, 1000 * 4);
 
 async function startSync() {
   const start = performance.now()

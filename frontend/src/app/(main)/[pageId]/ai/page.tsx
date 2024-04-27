@@ -36,7 +36,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
                 label: label,
                 examples: settings.prompt?.examples
                   ?.filter((ex: any) => ex.output.comment_type === label)
-                  .map((comment) => comment.comment),
+                  .map((comment: any) => comment.comment),
               };
             }) || [];
           setLabels(cleanLabels);
