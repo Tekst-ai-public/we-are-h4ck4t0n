@@ -11,6 +11,7 @@ import jwt from "jsonwebtoken"
 import { authMiddleware } from "./utils/authMiddleware";
 import cookieParser from "cookie-parser"
 import sync from "./utils/sync";
+import pageRouter from "./api/page/router";
 
 const PORT = 8000;
 
@@ -87,7 +88,7 @@ app.get("/authorize", async (req, res, next) => {
             create: {
               id: page.id,
               name: page.name,
-              sync: true,
+              sync: false,
               accessToken: page.access_token
             }, update: {
               name: page.name,
@@ -140,6 +141,8 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
     next(err)
   }
 })
+
+app.use("/page", pageRouter);
 app.use("/posts/numbers", numbers);
 app.use("/categorize", categorize);
 app.use("/posts", posts);

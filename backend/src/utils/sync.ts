@@ -92,32 +92,17 @@ async function getSettings(pageId: string): Promise<Omit<CategorizeInput, 'actua
   const page = await prisma.page.findFirst({
     where: {
       id: pageId
+    },
+    select: {
+      settings: true
     }
   })
   if (!page) {
     throw new Error('Page not found');
   }
-  const settings: Omit<CategorizeInput, 'actual'> = {
-    sysprompt: "You are a comment topic extractor",
-    labels: ["hatefull", "nothatefull"],
-    examples: [{
-      comment: "this is a racist quote",
-      output: {
-        comment_type: "hatefull"
-      }
-    },
-    {
-      comment: "ik ga hier totaal niet mee akkoord",
-      output: {
-        "comment_type": "nothatefull"
-      }
-    },
-    {
-      comment: "tu as tout à fait raison",
-      output: {
-        "comment_type": "nothatefull"
-      }
-    }]
+  const settings: Omit<CategorizeInput, 'actual'> = page.settings.prompt;
+  if (!settings) {
+    throw new Error('Settings not found');
   }
   return settings;
 }

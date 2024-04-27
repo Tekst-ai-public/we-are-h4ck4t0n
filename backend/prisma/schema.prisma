@@ -57,4 +57,5 @@ model Page {
   posts       Posts[]
   sync        Boolean  @default(false)
   accessToken String
+  settings Json @default("{}")
 }
