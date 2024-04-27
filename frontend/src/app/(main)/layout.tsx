@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import SideNav from "@/app/(main)/components/sideNav";
-import Header from "@/app/(main)/components/header";
+import Header from './[pageId]/components/header';
+import SideNav from './[pageId]/components/sideNav';
 
 interface MainLayoutProps {
   children: React.ReactNode;

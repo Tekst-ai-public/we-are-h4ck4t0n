@@ -14,7 +14,8 @@ const PORT = 8000;
 
 declare module "express" {
   interface Request {
-    fb: FacebookClient
+    fb: FacebookClient,
+    userId: string
   }
 }
 
@@ -35,7 +36,6 @@ app.get("/login", async (req, res) => {
   const params = new URLSearchParams({
     client_id: process.env.CLIENT_ID!,
     redirect_uri: "http://localhost:8000/authorize",
-    // redirect_uri: "https://www.facebook.com/connect/login_success.html",
     // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_content,pages_show_list,public_profile,email",
     scope: "pages_read_engagement,pages_show_list,pages_read_user_content,pages_manage_posts,email",
     response_type: "code",
@@ -100,14 +100,26 @@ app.get('/test', function(req: Request, res: Response) {
 
 app.get("/me", authMiddleware(), async (req: Request, res, next) => {
   try {
-    const me = await req.fb.getUserInfo()
+    // const me = await req.fb.getUserInfo()
+    const me = await prisma.authUser.findFirst({
+      where: {
+        id: req.userId
+      }
+    })
     return res.status(200).json(me)
   } catch (err) {
     next(err)
   }
 })
 
-
+app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
+  try {
+    const pages = await req.fb.getPages()
+    return res.status(200).json(pages)
+  } catch (err) {
+    next(err)
+  }
+})
 
 app.use("/categorize", categorize);
 app.use("/posts", posts);

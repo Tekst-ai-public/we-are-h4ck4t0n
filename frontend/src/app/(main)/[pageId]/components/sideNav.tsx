@@ -9,10 +9,10 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const routes = [
-  { route: '/dashboard', text: 'Dashboard', logo: () => <BarChart4Icon /> },
-  { route: '/ai', text: 'Models', logo: () => <Sparkles /> },
-  { route: '/analytics', text: 'Analytics', logo: () => <Sigma /> },
-  { route: '/settings', text: 'Settings', logo: () => <Settings2 />, align: 'end' },
+  { route: './dashboard', text: 'Dashboard', logo: () => <BarChart4Icon /> },
+  { route: './ai', text: 'Models', logo: () => <Sparkles /> },
+  { route: './analytics', text: 'Analytics', logo: () => <Sigma /> },
+  { route: './settings', text: 'Settings', logo: () => <Settings2 />, align: 'end' },
 ];
 
 export default function SideNav() {
@@ -42,7 +42,7 @@ export default function SideNav() {
             <Link href={route.route} key={index} className="flex-center w-full">
               {collapse ? (
                 <Button
-                  variant={pathname.includes(route.route) ? 'outline' : 'ghost'}
+                  variant={pathname.includes(route.route.replace(".", "")) ? 'outline' : 'ghost'}
                   className="p-0 h-10 w-10"
                 >
                   {route.logo()}

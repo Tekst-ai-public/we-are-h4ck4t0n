@@ -8,10 +8,11 @@ interface FetchResponse<T> extends Response {
   json: () => Promise<T>;
 }
 
-type AuthContextProps = {
+interface AuthContextProps {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-};
+  apiFetch: <T>(path: string, init: RequestInit | undefined) => Promise<FetchResponse<T>>
+}
 
 const AuthContext = createContext<AuthContextProps>({
   login: async () => {
@@ -20,6 +21,9 @@ const AuthContext = createContext<AuthContextProps>({
   logout: async () => {
     throw new Error('Logout function not implemented');
   },
+  apiFetch: async () => {
+    throw new Error("Api fetch not implemented")
+  }
 });
 
 export function useAuth() {
@@ -67,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const accessibleValues: AuthContextProps = {
     login,
     logout,
+    apiFetch
   };
 
   return (
