@@ -57,13 +57,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function apiFetch<T = any>(path: string, init: RequestInit = {}): Promise<FetchResponse<T>> {
-    const headers = {
-      'Content-Type': 'application/json',
-      ...init,
-    };
     const url = new URL(process.env.NEXT_PUBLIC_API_BASE_URL + path);
     return fetch(`${url.toString()}`, {
-      ...headers,
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       credentials: 'include',
     });
   }
