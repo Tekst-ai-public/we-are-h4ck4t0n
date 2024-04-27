@@ -14,6 +14,7 @@ import {
 import { useAuth } from '@/context/authContext';
 import { Button } from '@/components/ui/button';
 import Loading from '@/components/ui/loading';
+import Ping from '@/components/ui/ping';
 
 export default function PagesSelector() {
   const [pages, setPages] = useState<any>([]);
@@ -58,8 +59,9 @@ export default function PagesSelector() {
   return (
     <div className="w-full h-full">
       <Select value={currentPage} onValueChange={(newValue) => setCurrentPage(newValue)}>
-        <SelectTrigger className="w-[350px]">
+        <SelectTrigger className="w-[350px] relative">
           <SelectValue placeholder="select a page" />
+          {!currentPage && <Ping />}
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

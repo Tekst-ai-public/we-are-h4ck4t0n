@@ -22,22 +22,30 @@ export default function Page({ params }: { params: { pageId: string } }) {
   const { apiFetch } = useAuth()
 
   useEffect(() => {
-    apiFetch<any>(`/page/settings?pageId=${params.pageId}`, {}).then(async res => {
-      const data = await res.json()
-      setPrompt(data.prompt?.sysprompt)
-      const cleanLabels = data.prompt?.labels?.map((label: any) => {
-        return {
-          label: label,
-          examples: data.prompt?.examples?.filter((ex: any) => ex.output.comment_type === label)
-        }
-      }) || []
-      setLabels(cleanLabels)
-      setLoading(false)
-    })
-  }, [])
+    apiFetch<any>(`/page/settings?pageId=${params.pageId}`).then(async (res) => {
+      const data = await res.json();
+      setPrompt(data.prompt?.sysprompt || '');
+      const cleanLabels =
+        data.prompt?.labels?.map((label: any) => {
+          return {
+            label: label,
+            examples: data.prompt?.examples?.filter((ex: any) => ex.output.comment_type === label),
+          };
+        }) || [];
+      setLabels(cleanLabels);
+      setLoading(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function addLabel() {
-    setLabels((labels) => [...labels, { label: '', examples: [''] }]);
+    setLabels((labels) => [
+      ...labels,
+      {
+        label: '',
+        examples: [''],
+      },
+    ]);
   }
 
   function handleDelete(index: number) {
