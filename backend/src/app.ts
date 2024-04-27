@@ -2,7 +2,6 @@ import helmet from "helmet";
 import express, { Application, Request, Response } from "express"
 import categorize from "./api/categorize/categorize"
 import cors from 'cors';
-import postsRouter from './api/posts/posts';
 import syncRouter from './api/sync/router';
 import posts from './api/posts/posts';
 import FacebookClient from "./utils/facebookClient";
@@ -123,7 +122,7 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
 })
 
 app.use("/categorize", categorize);
-app.use("/posts", postsRouter);
+app.use("/posts", posts);
 app.use("/sync", syncRouter);
 
 const server = app.listen(PORT, () => {

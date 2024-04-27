@@ -70,7 +70,7 @@ export default class FacebookClient {
         return response;
     }
 
-    public async getPostsByPage(id: string,token: string): Promise<any> {
+    public async getPostsByPage(id: string,token?: string): Promise<any> {
         console.log(`token is ${token}`);
         const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/posts`, 'GET',undefined,undefined,token);
         return response;
@@ -81,7 +81,7 @@ export default class FacebookClient {
         return response;
     }
 
-    public async getCommentsByPost(id: string,accessToken: string): Promise<any> {
+    public async getCommentsByPost(id: string,accessToken?: string): Promise<any> {
         const response = await this.fetch(`https://graph.facebook.com/v${this._graphApiVersion}/${id}/comments`, 'GET',undefined,undefined,accessToken);
         return response;
     }
