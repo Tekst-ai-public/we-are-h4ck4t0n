@@ -20,7 +20,12 @@ export default async function sync(pageId: string, fb: FacebookClient) {
 
 async function syncPost(post: Post, pageId: string, fb: FacebookClient) {
   console.log(JSON.stringify(post));
-
+  const settings = await getSettings(pageId);
+  if (!settings) {
+    return;
+  }
+  
+  
   await prisma.posts.upsert({
     where: {
       id: post.id
@@ -35,9 +40,9 @@ async function syncPost(post: Post, pageId: string, fb: FacebookClient) {
       content: post.message,
     }
   })
-
+  
   const comments = await fb.getCommentsByPost(post.id);
-  const settings = await getSettings(pageId);
+  
 
   console.log(`processing ${comments.data.length} comments`)
 
@@ -101,9 +106,8 @@ async function getSettings(pageId: string): Promise<Omit<CategorizeInput, 'actua
     throw new Error('Page not found');
   }
   const settings: Omit<CategorizeInput, 'actual'> = page.settings.prompt;
-  if (!settings) {
-    throw new Error('Settings not found');
-  }
+ 
+
   return settings;
 }
 
