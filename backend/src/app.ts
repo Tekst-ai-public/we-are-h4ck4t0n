@@ -2,6 +2,8 @@ import helmet from "helmet";
 import express, { Application, Request, Response } from "express"
 import categorize from "./api/categorize/categorize"
 import cors from 'cors';
+import postsRouter from './api/posts/router';
+import syncRouter from './api/sync/router';
 import posts from './api/posts/posts';
 import FacebookClient from "./utils/facebookClient";
 import prisma from "./utils/prisma";
@@ -29,23 +31,20 @@ app.use((req, res, next) => {
   next()
 })
 
-app.get("/login", async (req, res, next) => {
-  try {
-    const authUrl = "https://www.facebook.com/v19.0/dialog/oauth?"
-    const params = new URLSearchParams({
-      client_id: process.env.CLIENT_ID!,
-      redirect_uri: "http://localhost:8000/authorize",
-      scope: "email",
-      response_type: "code",
-      state: "{st=abc,ds=123}",
-      config_id: "1100666177855608"
-    })
-    const url = authUrl + params.toString()
-    return res.redirect(url)
-
-  } catch (err) {
-    next(err)
-  }
+app.get("/login", async (req, res) => {
+  const authUrl = "https://www.facebook.com/v19.0/dialog/oauth?"
+  const params = new URLSearchParams({
+    client_id: process.env.CLIENT_ID!,
+    redirect_uri: "http://localhost:8000/authorize",
+    // redirect_uri: "https://www.facebook.com/connect/login_success.html",
+    // scope: "page_manage_engagement,pages_manage_posts,pages_read_engagement,pages_read_user_content,pages_show_list,public_profile,email",
+    scope: "pages_read_engagement,pages_show_list,pages_read_user_content,pages_manage_posts,email",
+    response_type: "code",
+    state: "{st=abc,ds=123}",
+    config_id: "1100666177855608"
+  })
+  const url = authUrl + params.toString()
+  return res.redirect(url)
 })
 
 app.get("/authorize", async (req, res, next) => {
@@ -110,7 +109,8 @@ app.get("/me", authMiddleware(), async (req: Request, res, next) => {
 })
 
 app.use("/categorize", categorize);
-app.use("/posts", posts);
+app.use("/posts", postsRouter);
+app.use("/sync", syncRouter);
 
 const server = app.listen(PORT, () => {
   console.log(`Environment: ${process.env.NODE_ENV}`);
