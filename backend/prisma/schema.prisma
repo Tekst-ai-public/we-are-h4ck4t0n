@@ -18,10 +18,8 @@ model Posts {
   id String @id @unique
   updatedAt  DateTime   @updatedAt
   createdAt  DateTime   @default(now())
-  author Users @relation(fields: [authorId], references: [id])
   page Page @relation(fields: [pageId], references: [id])
   pageId String
-  authorId String
   content String
   meta Json
   comments Comments[]
@@ -40,10 +38,10 @@ model Comments {
 }
 
 model Users {
-  id String @id @unique 
+  id String @id @unique
+  name String
   updatedAt  DateTime   @updatedAt
   createdAt  DateTime   @default(now())
-  posts Posts[]
   comments Comments[]
 }
 

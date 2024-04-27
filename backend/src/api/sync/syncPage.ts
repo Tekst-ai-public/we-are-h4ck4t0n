@@ -19,6 +19,7 @@ export default async function syncPage(req: Request, res: Response, next: NextFu
             return res.status(200).json({ message: 'sync' });
       
         } catch (error) {
+            console.log(error);
           next(error);
         }
       }
