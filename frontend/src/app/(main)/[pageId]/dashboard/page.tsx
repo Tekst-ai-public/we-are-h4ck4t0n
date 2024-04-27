@@ -19,7 +19,31 @@ interface NumbersData {
 export default function Page({ params }: { params: { pageId: string } }) {
   const [numbersData, setNumbersData] = useState<NumbersData | null>(null);
   const [isNumbersLoading, setIsNumbersLoading] = useState<boolean>(true);
+
+  const [labels, setLabels] = useState([])
+  const [labelsLoading, setLabelsLoading] = useState(true)
+
+
+
   const { apiFetch } = useAuth()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiFetch<any>(`/page/settings?pageId=${params.pageId}`, {});
+        const data = await response.json()
+        if (response.ok) {
+          setLabels(data.prompt?.labels || [])
+          setLabelsLoading(false)
+        }
+      } catch (error) {
+        console.log("numbers failed")
+      }
+    };
+
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
