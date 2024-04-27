@@ -13,49 +13,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Posts {
-  id String @id @unique
-  updatedAt  DateTime   @updatedAt
-  createdAt  DateTime   @default(now())
-  page Page @relation(fields: [pageId], references: [id])
-  pageId String
-  content String
-  meta Json
-  comments Comments[]
+  id        String     @id @unique
+  updatedAt DateTime   @updatedAt
+  createdAt DateTime   @default(now())
+  page      Page       @relation(fields: [pageId], references: [id])
+  pageId    String
+  content   String
+  meta      Json
+  comments  Comments[]
 }
 
 model Comments {
-  id String @id
-  updatedAt  DateTime   @updatedAt
-  createdAt  DateTime   @default(now())
-  content String
-  meta Json
-  author Users @relation(fields: [authorId], references: [id])
-  authorId String
-  post Posts @relation(fields: [postId], references: [id])
-  postId String
+  id        String   @id
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  content   String
+  meta      Json
+  author    Users?   @relation(fields: [authorId], references: [id])
+  authorId  String?
+  post      Posts    @relation(fields: [postId], references: [id])
+  postId    String
 }
 
 model Users {
-  id String @id @unique
-  name String
-  updatedAt  DateTime   @updatedAt
-  createdAt  DateTime   @default(now())
-  comments Comments[]
+  id        String     @id @unique
+  name      String
+  updatedAt DateTime   @updatedAt
+  createdAt DateTime   @default(now())
+  comments  Comments[]
 }
 
 model AuthUser {
-  id String @id
-  name String @default("")
+  id    String @id
+  name  String @default("")
   token String
 }
 
 model Page {
-  id String @id @unique
-  createdAt  DateTime   @default(now())
-  name String
-  posts Posts[]
-  sync Boolean @default(false)
+  id          String   @id @unique
+  createdAt   DateTime @default(now())
+  name        String
+  posts       Posts[]
+  sync        Boolean  @default(false)
   accessToken String
 }
