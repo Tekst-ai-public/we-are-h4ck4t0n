@@ -39,7 +39,7 @@ export default function SideNav() {
         {routes
           .filter((route) => route.align !== 'end')
           .map((route, index) => (
-            <Link href={route.route} key={index} className="flex-center w-full cursor-pointer">
+            <Link href={route.route} key={index} className="flex-center w-full">
               {collapse ? (
                 <Button
                   variant={pathname.includes(route.route) ? 'outline' : 'ghost'}
