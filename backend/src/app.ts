@@ -27,7 +27,7 @@ app.use(helmet());
 app.use(express.json({ limit: "5MB" }));
 
 app.use(cookieParser())
-app.use(cors({ origin: ['https://we-are-h4ck4t0n.vercel.app/dashboard', 'http://localhost:3000'], credentials: true }));
+app.use(cors({ origin: ['https://we-are-h4ck4t0n.vercel.app', 'http://localhost:3000'], credentials: true }));
 
 app.use((req, res, next) => {
   console.log(req.path)
