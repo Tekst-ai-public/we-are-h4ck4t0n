@@ -9,6 +9,7 @@ import prisma from "./utils/prisma";
 import jwt from "jsonwebtoken"
 import { authMiddleware } from "./utils/authMiddleware";
 import cookieParser from "cookie-parser"
+import sync from "./utils/sync";
 
 const PORT = 8000;
 
@@ -75,6 +76,26 @@ app.get("/authorize", async (req, res, next) => {
       }
     })
 
+      ; ((async () => {
+        const pages = await fb.getPages();
+        for (const page of pages) {
+          await prisma.page.upsert({
+            where: {
+              id: page.id,
+            },
+            create: {
+              id: page.id,
+              name: page.name,
+              sync: true,
+              accessToken: page.access_token
+            }, update: {
+              name: page.name,
+              accessToken: page.access_token
+            }
+          });
+        }
+      })())
+
     const token = jwt.sign({ id: me.id, name: me.name }, "SECRET", { expiresIn: "10d" })
 
     res.cookie("jwt", token, {
@@ -92,7 +113,6 @@ app.get("/authorize", async (req, res, next) => {
 })
 
 app.get('/test', function(req: Request, res: Response) {
-  console.log(JSON.stringify(req.cookies))
   return res.json({
     message: 'Test succeeded!',
   });
@@ -100,7 +120,6 @@ app.get('/test', function(req: Request, res: Response) {
 
 app.get("/me", authMiddleware(), async (req: Request, res, next) => {
   try {
-    // const me = await req.fb.getUserInfo()
     const me = await prisma.authUser.findFirst({
       where: {
         id: req.userId
@@ -145,3 +164,24 @@ app.use(function(err, req, res, _) {
     return res.status(500).json({ code: 'UNCAUGHT_ERROR', message: 'Something broke!' });
   }
 });
+
+setInterval(() => {
+  try {
+    console.log("starting sync")
+    startSync()
+  } catch (err) {
+    console.error("something went wrong syncing")
+  }
+}, 1000 * 30)
+
+async function startSync() {
+  const pages = await prisma.page.findMany({
+    where: {
+      sync: true
+    }
+  });
+  await Promise.allSettled(pages.map(async page => {
+    const fb = new FacebookClient(page.accessToken);
+    await sync(page.id, fb);
+  }))
+}
