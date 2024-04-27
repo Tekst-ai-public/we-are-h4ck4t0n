@@ -1,6 +1,8 @@
-"use client"
+/* eslint-disable react-hooks/exhaustive-deps */
+'use client';
 import React, { useEffect, useState } from 'react';
 import { MoreHorizontal, ThumbsDown, ThumbsUp } from 'lucide-react';
+import Jate from 'jates';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/context/authContext';
 import {
@@ -20,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
 
 type CommentTypeCount = {
   type: string;
@@ -68,6 +71,7 @@ export default function Page({ params }: { params: { pageId: string } }) {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -189,41 +193,113 @@ export default function Page({ params }: { params: { pageId: string } }) {
           </Select>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {comments.map((comment) => {
-            return (
-              <div
-                className="rounded-md border py-2 px-3 flex items-center justify-between"
-                key={comment.id}
-              >
-                <div className="w-1/2">{comment.content}</div>
-                <Badge>{comment.meta.comment_type}</Badge>
-                <div className="space-x-2">
-                  <Button variant="ghost" className="h-8 w-8 p-0 hover:text-green-500">
-                    <ThumbsUp size={18} />
-                  </Button>
-                  <Button variant="ghost" className="h-8 w-8 p-0 hover:text-red-500">
-                    <ThumbsDown size={18} />
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal size={18} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>
-                        <a href={`https://facebook.com/${comment.postId}`} target="_blank">
-                          Go to post
-                        </a>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>Hide</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+          {!comments.filter((comment) => {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - 10);
+            return new Date(comment.createdAt) > now;
+          }).length ? (
+            <div className="flex-center text-slate-500">No recent comments</div>
+          ) : (
+            <>
+              <div className="text-slate-500">Recent comments</div>
+              {comments
+                .filter((comment) => {
+                  const now = new Date();
+                  now.setMinutes(now.getMinutes() - 10);
+                  return new Date(comment.createdAt) > now;
+                })
+                .map((comment) => {
+                  return (
+                    <div
+                      className="rounded-md border py-2 px-3 flex items-center justify-between"
+                      key={comment.id}
+                    >
+                      <div className="w-1/2 flex items-center">
+                        <div className="w-28 text-sm text-slate-500">
+                          {new Jate(comment.createdAt).format('dd/MM - hh:mm')}
+                        </div>
+                        <div>{comment.content}</div>
+                      </div>
+
+                      <Badge>{comment.meta.comment_type}</Badge>
+                      <div className="space-x-2">
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:text-green-500">
+                          <ThumbsUp size={18} />
+                        </Button>
+                        <Button variant="ghost" className="h-8 w-8 p-0 hover:text-red-500">
+                          <ThumbsDown size={18} />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal size={18} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem>
+                              <a href={`https://facebook.com/${comment.postId}`} target="_blank">
+                                Go to post
+                              </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Hide</DropdownMenuItem>
+                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  );
+                })}
+            </>
+          )}
+          <Separator className="my-5" />
+          <div className="text-slate-500">History</div>
+          {comments
+            .filter((comment) => {
+              const now = new Date();
+              now.setMinutes(now.getMinutes() - 10);
+              return new Date(comment.createdAt) <= now;
+            })
+            .map((comment) => {
+              return (
+                <div
+                  className="rounded-md border py-2 px-3 flex items-center justify-between"
+                  key={comment.id}
+                >
+                  <div className="w-1/2 flex items-center">
+                    <div className="w-28 text-sm text-slate-500">
+                      {new Jate(comment.createdAt).format('dd/MM - hh:mm')}
+                    </div>
+                    <div>{comment.content}</div>
+                  </div>
+
+                  <Badge>{comment.meta.comment_type}</Badge>
+                  <div className="space-x-2">
+                    <Button variant="ghost" className="h-8 w-8 p-0 hover:text-green-500">
+                      <ThumbsUp size={18} />
+                    </Button>
+                    <Button variant="ghost" className="h-8 w-8 p-0 hover:text-red-500">
+                      <ThumbsDown size={18} />
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal size={18} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <a href={`https://facebook.com/${comment.postId}`} target="_blank">
+                            Go to post
+                          </a>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>Hide</DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </CardContent>
       </Card>
     </div>
