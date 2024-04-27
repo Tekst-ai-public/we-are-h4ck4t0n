@@ -12,7 +12,6 @@ import { authMiddleware } from "./utils/authMiddleware";
 import cookieParser from "cookie-parser"
 import sync from "./utils/sync";
 import pageRouter from "./api/page/router";
-import { equal } from "assert";
 
 const PORT = 8000;
 
