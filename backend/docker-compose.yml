@@ -15,7 +15,8 @@ services:
       - ./package.json:/usr/src/app/package.json
       - ./.swcrc:/usr/src/app/.swcrc
       - ./dev.sh:/usr/src/app/dev.sh
-    command: /bin/sh -c "./dev.sh"
+    # command: /bin/sh -c "./dev.sh"
+    command: /bin/sh -c "node dist/app.js"
     networks:
       - network
 
