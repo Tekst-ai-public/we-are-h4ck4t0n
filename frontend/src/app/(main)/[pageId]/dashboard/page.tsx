@@ -1,33 +1,60 @@
-import React from 'react';
+"use client"
+import React, {useEffect, useState} from 'react';
 import { BarChart4 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {useAuth} from "@/context/authContext";
+
+type CommentTypeCount = {
+    type: string;
+    count: number;
+};
+
+interface NumbersData {
+    postCount: number;
+    commentCount: number;
+    commentTypeCounts: CommentTypeCount[];
+}
+
 
 export default function Page() {
+    const [numbersData, setNumbersData] = useState<NumbersData | null>(null);
+    const [isNumbersLoading, setIsNumbersLoading] = useState<boolean>(true);
+    const {apiFetch} = useAuth()
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await apiFetch('/api/posts/numbers', {});
+                setNumbersData(await response.json() as unknown as NumbersData);
+            } catch (error) {
+                console.log("numbers failed")
+            } finally {
+                setIsNumbersLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-3 gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Comments</CardTitle>
         </CardHeader>
-        <CardContent>339 847</CardContent>
+        <CardContent>{isNumbersLoading ? "Loading ...": String(numbersData?.commentCount || 0)}</CardContent>
       </Card>
       <Card>
         <CardHeader>
           <CardTitle>Posts</CardTitle>
         </CardHeader>
-        <CardContent>3O 509</CardContent>
+        <CardContent>{isNumbersLoading ? "Loading ...": String(numbersData?.postCount || 0)}</CardContent>
       </Card>
       <Card>
         <CardHeader>
           <CardTitle>Sentiment</CardTitle>
         </CardHeader>
-        <CardContent>35% negative</CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Addressed comments</CardTitle>
-        </CardHeader>
-        <CardContent>3.489</CardContent>
+        <CardContent>{isNumbersLoading ? "Loading ...": JSON.stringify(numbersData?.commentTypeCounts || 0)}</CardContent>
       </Card>
       <Card className="col-span-2 h-96">
         <CardHeader>
