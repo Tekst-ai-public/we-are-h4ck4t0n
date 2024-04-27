@@ -12,6 +12,7 @@ import { authMiddleware } from "./utils/authMiddleware";
 import cookieParser from "cookie-parser"
 import sync from "./utils/sync";
 import pageRouter from "./api/page/router";
+import { equal } from "assert";
 
 const PORT = 8000;
 
@@ -141,6 +142,49 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
     next(err)
   }
 })
+
+
+app.get('/comments', async function(req: Request, res: Response, next: NextFunction) {
+    try {
+        const label = req.query.label as string;
+        let newWhere = {};
+        console.log(`label: ${label}`);
+        if (label) {
+            // When 'label' exists, extend 'where' to include a condition on the JSON field 'meta'.
+            newWhere = {
+                meta: {
+                    path: ['comment_type'], // Specify the path if you're querying a nested property in a JSON field.
+                    equals: label, // Use 'string_contains' or another appropriate filter.
+                },
+            };
+        }else{
+            // When 'label' does not exist, extend 'where' to include a condition on the JSON field 'meta'.
+            newWhere = {
+              
+                meta: {
+                    path: ['comment_type'],
+                    not: null,
+                },
+            };
+        }
+        console.log(`where: ${JSON.stringify(newWhere)}`);
+
+        const comments = await prisma.comments.findMany({
+            where: newWhere,
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        console.log(`comments: ${JSON.stringify(comments)}`);
+    
+        return res.status(200).json(comments);
+    } catch (error) {
+        console.log(error)
+        next(error);
+    }
+});
+
+
 
 app.use("/page", pageRouter);
 app.use("/posts/numbers", numbers);
