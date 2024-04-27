@@ -48,11 +48,12 @@ app.get("/login", async (req, res) => {
   return res.redirect(url)
 })
 
-app.get("/logout", async (req, res) => {
-
-  res.clearCookie("jwt")
-  return res.redirect("/login")
-})
+app.get("/logout", (req, res) => {
+  // Clear the cookie
+  res.clearCookie("jwt");
+  // Instead of redirecting, just send a success response
+  res.status(200).json({ message: "Logged out successfully" });
+});
 
 app.get("/authorize", async (req, res, next) => {
   try {

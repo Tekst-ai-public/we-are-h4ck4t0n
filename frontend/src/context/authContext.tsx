@@ -65,7 +65,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
-    await apiFetch("/logout")
+    const response = await apiFetch("/logout");
+    if (response.ok) {
+      // Redirect using client-side routing, assuming you are using Next.js or React Router
+      router.push('/dashboard'); // or history.push('/login') in React Router
+      const response = await apiFetch("/login");
+    } else {
+      console.error('Failed to log out');
+    }
   }
 
   const accessibleValues: AuthContextProps = {

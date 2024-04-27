@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 export default function Page({ params }: { params: { pageId: string } }) {
-
   const [pages, setPages] = useState<any[]>([])
   const [currentPage, setCurrentPage] = useState<any>()
   const { apiFetch } = useAuth()
@@ -37,13 +36,13 @@ export default function Page({ params }: { params: { pageId: string } }) {
   if (!currentPage) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Select disabled={pages.length > 0} value={currentPage} onValueChange={newValue => setCurrentPage(newValue)}>
+        <Select disabled={pages?.length > 0} value={currentPage} onValueChange={newValue => setCurrentPage(newValue)}>
           <SelectTrigger className="w-[350px]">
             <SelectValue placeholder="select a page" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {pages.map((page: any) => {
+              {(pages || []).map((page: any) => {
                 return <SelectItem key={page.id} value={page.id}>{page.name}</SelectItem>
               })}
             </SelectGroup>
