@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken"
 import { authMiddleware } from "./utils/authMiddleware";
 import cookieParser from "cookie-parser"
 import sync from "./utils/sync";
+import pageRouter from "./api/page/router";
 
 const PORT = 8000;
 
@@ -140,6 +141,7 @@ app.get("/pages", authMiddleware(), async (req: Request, res, next) => {
   }
 })
 
+app.use("/page", pageRouter);
 app.use("/categorize", categorize);
 app.use("/posts", posts);
 app.use("/sync", syncRouter);
