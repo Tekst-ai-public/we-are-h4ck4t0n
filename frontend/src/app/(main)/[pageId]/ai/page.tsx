@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,15 +8,33 @@ import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/authContext';
 
 type LabelWithExamples = {
   label: string;
   examples: string[];
 };
 
-export default function Page() {
+export default function Page({ params }: { params: { pageId: string } }) {
   const [prompt, setPrompt] = useState('');
   const [labels, setLabels] = useState<LabelWithExamples[]>([]);
+  const [loading, setLoading] = useState(true)
+  const { apiFetch } = useAuth()
+
+  useEffect(() => {
+    apiFetch<any>(`/page/settings?pageId=${params.pageId}`, {}).then(async res => {
+      const data = await res.json()
+      setPrompt(data.prompt?.sysprompt)
+      const cleanLabels = data.prompt?.labels?.map((label: any) => {
+        return {
+          label: label,
+          examples: data.prompt?.examples?.filter((ex: any) => ex.output.comment_type === label)
+        }
+      }) || []
+      setLabels(cleanLabels)
+      setLoading(false)
+    })
+  }, [])
 
   function addLabel() {
     setLabels((labels) => [...labels, { label: '', examples: [''] }]);
@@ -52,9 +70,20 @@ export default function Page() {
 
   async function saveSettings() {
     try {
-      const res = await fetch('https://localhost:8000', {
+      const res = await apiFetch(`/page/settings?pageId=${params.pageId}`, {
         method: 'POST',
-        body: JSON.stringify(labels),
+        body: JSON.stringify({
+          prompt: {
+            sysprompt: prompt,
+            labels: labels.map(l => l.label),
+            examples: labels.map(l => l.examples.map(ex => {
+              return {
+                comment: ex,
+                output: { comment_type: l.label }
+              }
+            })).flat()
+          }
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -88,6 +117,7 @@ export default function Page() {
                 placeholder="proooooooomting ..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
+                disabled={loading}
               />
             </div>
           </div>
@@ -106,6 +136,7 @@ export default function Page() {
                     className="w-80"
                     placeholder={`Label ${index + 1}`}
                     value={label.label}
+                    disabled={loading}
                     onChange={(e) =>
                       setLabels((labels) =>
                         labels.map((item, i) => {
@@ -129,6 +160,7 @@ export default function Page() {
                           className="w-full"
                           placeholder={`Example ${i + 1}`}
                           value={example}
+                          disabled={loading}
                           onChange={(e) =>
                             setLabels((labels) =>
                               labels.map((item, itemIndex) => {
@@ -150,6 +182,7 @@ export default function Page() {
                         />
                         <Button
                           variant="ghost"
+                          disabled={loading}
                           className="hover:text-red-600"
                           onClick={() => deleteExample(index, i)}
                         >
@@ -158,7 +191,7 @@ export default function Page() {
                       </div>
 
                       {i === label.examples.length - 1 && (
-                        <Button variant="ghost" onClick={() => addExample(index)}>
+                        <Button disabled={loading} variant="ghost" onClick={() => addExample(index)}>
                           Add example
                         </Button>
                       )}
@@ -169,6 +202,7 @@ export default function Page() {
                 <Button
                   variant="ghost"
                   className="hover:text-red-600"
+                  disabled={loading}
                   onClick={() => handleDelete(index)}
                 >
                   <Trash2 size={18} />
@@ -176,13 +210,13 @@ export default function Page() {
               </div>
             ))}
             <div>
-              <Button variant="secondary" className="w-28" onClick={addLabel}>
+              <Button disabled={loading} variant="secondary" className="w-28" onClick={addLabel}>
                 Add label
               </Button>
             </div>
           </div>
           <div className="mt-10 w-full flex grow justify-end">
-            <Button variant="secondary" className="w-24" onClick={saveSettings}>
+            <Button disabled={loading} variant="secondary" className="w-24" onClick={saveSettings}>
               Save
             </Button>
           </div>
